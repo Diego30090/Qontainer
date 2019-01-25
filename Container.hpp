@@ -3,20 +3,46 @@
 
 #include <string>
 #include <functional>
+#include <stdexcept>
+
+////////////////////////////////////////////////////////////////////////////////
+// INTERFACCIA /////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 // Eccezioni lanciabili da Container
-class ContainerException {};
-class ContainerCellNotFoundExeption : public ContainerException {};
-class ContainerDuplicateKeyExeption : public ContainerException {};
+class ContainerException : public std::exception
+{
+public:
+  virtual const char * what() const noexcept;
+};
 
+class ContainerCellNotFoundException : public ContainerException
+{
+public:
+  virtual const char * what() const noexcept;
+};
+
+class ContainerDuplicateKeyException : public ContainerException
+{
+public:
+  virtual const char * what() const noexcept;
+};
+
+template <class T, class K>
+class cIterator; // forwarding
+
+// CONTAINER
 template <class T, class K = std::string>
 class Container
 {
+  friend class cIterator<T, K>;
+  
 private:
-
   // Nodi nel bucket
   class node
   {
+    friend class cIterator<T, K>;
+    
   public:
     K key;
     T info;
@@ -24,10 +50,6 @@ private:
 
     node(const K &, const T &, node * = nullptr);
   };
-
-  // Eccezioni lanciabili dai bucket
-  class NodeException {};
-  class NodeCellNotFoundExeption : public NodeException {};
 
   // Metodi per la gestione dei bucket
   static void destroy(node *&);
@@ -63,21 +85,52 @@ public:
   Container(const Container &);
   ~Container();
 
-  Container & operator=(const Container &);
+  Container & operator=(const Container &); // DA FARE
 
   unsigned int size() const;
 
   bool empty() const;
 
-  bool operator==(const Container &) const;
+  bool operator==(const Container &) const; // DA FARE
 
   T & get(const K &);
+
+  // const T & get(cost K &) const;
   
   void put(const K &, const T &);
 
   void remove(const K &);
+
+  cIterator<T, K> begin();
+
+  cIterator<T, K> end();
+
+  //class const_iterator //DA FARE  
 };
 
+template <class T, class K>
+class cIterator
+{
+private:
+  node *p;
+  unsigned int tablePos;
+    
+public:
+  cIterator();
+  cIterator(node *);
+  cIterator(const cIterator &);
+  cIterator(const Container<T, K> &);
+    
+  T & operator*();
+  cIterator & operator++();
+  cIterator operator++(int);
+  bool operator==(const cIterator &);
+  bool operator!=(const cIterator &);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// IMPLEMENTAZIONI /////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 // IMPLEMENTAZIONI BUCKET
 template <class T, class K>
@@ -195,14 +248,14 @@ unsigned int Container<T, K>::getIndex(const K &k)
 
 template <class T, class K>
 T & Container<T, K>::get(const K &k)
-// THROWS: ContainerCellNotFoundExeption
+// THROWS: ContainerCellNotFoundException
 {
   //unsigned long h = keyHash(k);
   //int i = getIndex(k);
 
   node *tmp = search(table[getIndex(k)], k);
 
-  if (!tmp) throw ContainerCellNotFoundExeption();
+  if (!tmp) throw ContainerCellNotFoundException();
 
   return tmp->info;
 }
@@ -214,7 +267,7 @@ void Container<T, K>::put(const K &k, const T &obj)
   //unsigned long h = keyHash(k);
   //int i = getIndex(k);
 
-  if(search(table[getIndex(k)], k)) throw ContainerDuplicateKeyExeption();
+  if(search(table[getIndex(k)], k)) throw ContainerDuplicateKeyException();
   
   insert(table[getIndex(k)], k, obj);
   tableSize++;
@@ -226,15 +279,44 @@ void Container<T, K>::remove(const K &k)
 {
   node *tmp = search(table[getIndex(k)], k);
 
-  if (!tmp) throw ContainerCellNotFoundExeption();
+  if (!tmp) throw ContainerCellNotFoundException();
   
   remove(tmp, k);
   tableSize--;
   //checkResize();
 }
 
-// IMPLEMENTAZIONE ITERATORI
+// IMPLEMENTAZIONE ECCEZIONI
+const char* ContainerException::what() const noexcept
+{
+  return "Errore sconosciuto Container";
+}
 
+const char* ContainerCellNotFoundException::what() const noexcept
+{
+  return "Nessuna voce trovata con la chiave inserita";
+}
+
+const char* ContainerDuplicateKeyException::what() const noexcept
+{
+  return "Inserimento di una chiave duplicata";
+}
+
+// IMPLEMENTAZIONE ITERATORI
+// template <class T, class K>
+// Container<T, K>::iterator::iterator() : p(table[0]) {}
+
+// template <class T, class K>
+// T & Container<T, K>::iterator::operator*()
+// {
+//   return p->info;
+// }
+
+// template <class T, class K>
+// bool Container<T, K>::iterator::operator==(const Container<T, K>::iterator &i)
+// {
+//   return p == i.p;
+// }
 
 
 #endif // CONTAINER_HPP
