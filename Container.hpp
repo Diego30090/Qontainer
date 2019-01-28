@@ -9,6 +9,10 @@
 // INTERFACCIA /////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+// Forwarding
+template <class T, class K>
+class iterator;
+
 // Eccezioni lanciabili da Container
 class ContainerException : public std::exception
 {
@@ -28,20 +32,18 @@ public:
   virtual const char * what() const noexcept;
 };
 
-template <class T, class K>
-class cIterator; // forwarding
-
-// CONTAINER
+// Container
 template <class T, class K = std::string>
 class Container
 {
-  friend class cIterator<T, K>;
+  friend class iterator<T, K>;
   
 private:
+  
   // Nodi nel bucket
   class node
   {
-    friend class cIterator<T, K>;
+    friend class iterator<T, K>;
     
   public:
     K key;
@@ -58,10 +60,10 @@ private:
   static void remove(node *&);
   static node * copy(node *);
 
-  // TABLE
+  // table
   static const unsigned int INIT_TABLE_LENGTH = 5;
 
-  static const unsigned int INIT_TABLE_THRESHOLD = INIT_TABLE_LENGTH * 3;
+  static const unsigned int INIT_TABLE_THRESHOLD = INIT_TABLE_LENGTH * 2;
   
   node **table;
   
@@ -78,6 +80,9 @@ private:
   void checkResize();
   
   void resize();
+
+  // Metodi per la gestione della table
+  static node ** getTable(const Container<T, K> *);
   
 public:
   
@@ -101,31 +106,35 @@ public:
 
   void remove(const K &);
 
-  cIterator<T, K> begin();
+  class iterator
+  {
+    friend class Container<T, K>;
+    
+  private:
+    Container<T, K> *cont;
+    node *buck;
+    unsigned int itPos;
+    unsigned int itTablePos;
+    bool end;
+    
+  public:
+    iterator(Container<T, K> *);
+    iterator(const iterator &);
+    
+    T & operator*();
+    K getKey();
+    bool isEnd();
+    iterator & operator++();
+    iterator operator++(int);
+    bool operator==(const iterator &);
+    bool operator!=(const iterator &);
+  };
 
-  cIterator<T, K> end();
+  iterator begin();
+
+  iterator end();
 
   //class const_iterator //DA FARE  
-};
-
-template <class T, class K>
-class cIterator
-{
-private:
-  node *p;
-  unsigned int tablePos;
-    
-public:
-  cIterator();
-  cIterator(node *);
-  cIterator(const cIterator &);
-  cIterator(const Container<T, K> &);
-    
-  T & operator*();
-  cIterator & operator++();
-  cIterator operator++(int);
-  bool operator==(const cIterator &);
-  bool operator!=(const cIterator &);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -188,6 +197,18 @@ typename Container<T, K>::node * Container<T, K>::copy(node *n)
 
 // IMPLEMENTAZIONI TABLE
 template <class T, class K>
+typename Container<T, K>::node ** Container<T, K>::getTable(const Container<T, K> *c)
+{
+  return c->table;
+}
+
+template <class T, class K>
+unsigned int Container<T, K>::getIndex(const K &k)
+{
+  return keyHash(k) % tableLength;
+}
+
+template <class T, class K>
 Container<T, K>::Container() : table(new node*[INIT_TABLE_LENGTH]),
 			       tableLength(INIT_TABLE_LENGTH),
 			       tableThreshold(INIT_TABLE_THRESHOLD),
@@ -217,13 +238,13 @@ Container<T, K>::~Container()
 }
 
 template <class T, class K>
-bool Container<T, K>::operator==(const Container &) const
+bool Container<T, K>::operator==(const Container &c) const
 {
   //DA FARE
 }
 
 template <class T, class K>
-Container<T, K> & Container<T, K>::operator=(const Container &)
+Container<T, K> & Container<T, K>::operator=(const Container &c)
 {
   //DA FARE
 }
@@ -238,12 +259,6 @@ template <class T, class K>
 bool Container<T, K>::empty() const
 {
   return tableSize == 0;
-}
-
-template <class T, class K>
-unsigned int Container<T, K>::getIndex(const K &k)
-{
-  return keyHash(k) % tableLength;
 }
 
 template <class T, class K>
@@ -287,31 +302,72 @@ void Container<T, K>::remove(const K &k)
 }
 
 // IMPLEMENTAZIONE ECCEZIONI
-const char* ContainerException::what() const noexcept
+const char * ContainerException::what() const noexcept
 {
   return "Errore sconosciuto Container";
 }
 
-const char* ContainerCellNotFoundException::what() const noexcept
+const char * ContainerCellNotFoundException::what() const noexcept
 {
   return "Nessuna voce trovata con la chiave inserita";
 }
 
-const char* ContainerDuplicateKeyException::what() const noexcept
+const char * ContainerDuplicateKeyException::what() const noexcept
 {
-  return "Inserimento di una chiave duplicata";
+  return "Inserimento di un valore chiave duplicato";
 }
 
 // IMPLEMENTAZIONE ITERATORI
-// template <class T, class K>
-// Container<T, K>::iterator::iterator() : p(table[0]) {}
+template <class T, class K>
+Container<T, K>::iterator::iterator(Container<T, K> *c) : cont(c),
+							  buck(*(getTable(c))),
+							  itPos(0),
+							  itTablePos(0),
+							  end(false)
+{
+  while (!buck && itTablePos < cont->tableLength)
+    {
+      ++itTablePos;
+      buck = getTable(cont);
+    }
+}
 
-// template <class T, class K>
-// T & Container<T, K>::iterator::operator*()
-// {
-//   return p->info;
-// }
+template <class T, class K>
+T & Container<T, K>::iterator::operator*()
+{
+  return buck->info;
+}
 
+template <class T, class K>
+K Container<T, K>::iterator::getKey()
+{
+  return buck->key;
+}
+
+template <class T, class K>
+bool Container<T, K>::iterator::isEnd()
+{
+  return end;
+}
+
+template <class T, class K>
+typename Container<T, K>::iterator & Container<T, K>::iterator::operator++()
+{
+  if (++itPos < cont->tableSize)
+    {
+      if (!buck)
+	{
+	  while (!buck && itTablePos < cont->tableLength)
+	    buck = cont->table[++itTablePos];
+
+	  if (itTablePos >= cont->tableLength)
+	    end = true;
+	  
+	  return *this;
+	}
+      //else
+    }
+}	
 // template <class T, class K>
 // bool Container<T, K>::iterator::operator==(const Container<T, K>::iterator &i)
 // {
