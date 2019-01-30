@@ -25,10 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+        Gerarchia.cpp
 
 HEADERS += \
-        Container.hpp
+        Container.hpp \
+        DeepPtr.hpp \
+        Gerarchia.hpp
 
 FORMS +=
 

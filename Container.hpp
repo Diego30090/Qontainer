@@ -17,25 +17,25 @@ class iterator;
 class ContainerException : public std::exception
 {
 public:
-  virtual const char * what() const noexcept;
+  virtual const char * what() const noexcept; // overriding
 };
 
 class ContainerCellNotFoundException : public ContainerException
 {
 public:
-  virtual const char * what() const noexcept;
+  virtual const char * what() const noexcept; // overriding
 };
 
 class ContainerDuplicateKeyException : public ContainerException
 {
 public:
-  virtual const char * what() const noexcept;
+  virtual const char * what() const noexcept; // overriding
 };
 
 class ContainerIteratorEmptyTableException : public ContainerException
 {
 public:
-  virtual const char * what() const noexcept;
+  virtual const char * what() const noexcept; // overriding
 };
 
 // Container
@@ -87,9 +87,6 @@ private:
   
   void resize();
 
-  // Metodi per la gestione della table
-  static node ** getTable(const Container<T, K> *);
-  
 public:
   
   Container();
@@ -117,17 +114,20 @@ public:
     friend class Container<T, K>;
     
   private:
-    Container<T, K> *cont;
-    node *buck;
+    Container<T, K> const * const ref;
+    node ** itArray;
+    unsigned int const itArrayLength;
     unsigned int itPos;
-    unsigned int itTablePos;
     bool end;
     
   public:
-    iterator(Container<T, K> *);
+    iterator(Container<T, K> const *);
     iterator(const iterator &);
+    ~iterator();
     
     T & operator*();
+    T * operator->();
+    
     K getKey();
     bool isEnd();
     iterator & operator++();
@@ -136,9 +136,10 @@ public:
     bool operator!=(const iterator &);
   };
 
-  iterator begin();
+  // Metodi per la gestione degli iteratori
+  iterator begin() const;
 
-  iterator end();
+  //iterator end();
 
   //class const_iterator //DA FARE  
 };
@@ -147,7 +148,7 @@ public:
 // IMPLEMENTAZIONI /////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// IMPLEMENTAZIONI BUCKET
+// IMPLEMENTAZIONE BUCKET
 template <class T, class K>
 Container<T, K>::node::node(const K &k, const T &obj, node *n) : key(k), info(obj), next(n) {}
 
@@ -201,13 +202,7 @@ typename Container<T, K>::node * Container<T, K>::copy(node *n)
   return new node(n->key, n->info, copy(n->next));
 }
 
-// IMPLEMENTAZIONI TABLE
-template <class T, class K>
-typename Container<T, K>::node ** Container<T, K>::getTable(const Container<T, K> *c)
-{
-  return c->table;
-}
-
+// IMPLEMENTAZIONE TABLE
 template <class T, class K>
 unsigned int Container<T, K>::getIndex(const K &k)
 {
@@ -325,43 +320,66 @@ const char * ContainerDuplicateKeyException::what() const noexcept
 
 const char * ContainerIteratorEmptyTableException::what() const noexcept
 {
-  return "Si è cercato di dichiarare un iteratore a Container vuoto";
+  return "Si è cercato di dichiarare un iteratore su un Container vuoto";
 }
 
 // IMPLEMENTAZIONE ITERATORI
 template <class T, class K>
-Container<T, K>::iterator::iterator(Container<T, K> *c) : cont(c),
-							  buck(*(getTable(c))),
+Container<T, K>::iterator::iterator(Container<T, K> const *c) : ref(c),
+							  itArrayLength(c->tableSize),
+							  itArray(new node*[c->tableSize]),
 							  itPos(0),
-							  itTablePos(0),
-							  end(false)
+							  end(c->tableSize == 1 ? true : false)
 {
   if (c->empty())
     throw ContainerIteratorEmptyTableException();
   
-  while (!buck && itTablePos < cont->tableLength)
+  int j = 0;
+  for (unsigned int i = 0; i < c->tableLength; ++i)
     {
-      ++itTablePos;
-      buck = getTable(cont);
+      node *tmp = c->table[i];
+      while (tmp)
+	{
+	  itArray[j++] = tmp;
+	  tmp = tmp->next;
+	}
     }
+}
 
-  if (itTablePos >= cont->tableLength)
-    throw ContainerException();
+template <class T, class K>
+Container<T, K>::iterator::iterator(const Container<T, K>::iterator &it) :
+  ref(it.ref),
+  itArrayLength(it.itArrayLength),
+  itArray(new node*[it.itArrayLength]),
+  itPos(it.itPos),
+  end(it.end)
+{
+  for (unsigned int i = 0; i < itArrayLength; ++i)
+    itArray[i] = it.itArray[i];
+}
 
-  if (cont->tableSize == 1)
-    end = true;
+template <class T, class K>
+Container<T, K>::iterator::~iterator()
+{
+  delete[] itArray;
 }
 
 template <class T, class K>
 T & Container<T, K>::iterator::operator*()
 {
-  return buck->info;
+  return itArray[itPos]->info;
+}
+
+template <class T, class K>
+T * Container<T, K>::iterator::operator->()
+{
+  return &(itArray[itPos]->info);
 }
 
 template <class T, class K>
 K Container<T, K>::iterator::getKey()
 {
-  return buck->key;
+  return itArray[itPos]->key;
 }
 
 template <class T, class K>
@@ -372,23 +390,38 @@ bool Container<T, K>::iterator::isEnd()
 
 template <class T, class K>
 typename Container<T, K>::iterator & Container<T, K>::iterator::operator++()
+{  
+  if (++itPos >= itArrayLength)
+    end = true;
+
+  return *this;
+}
+
+template <class T, class K>
+typename Container<T, K>::iterator Container<T, K>::iterator::operator++(int)
 {
-  if (++itPos < cont->tableSize)
-    {
-      while (!buck && itTablePos < cont->tableLength)
-	buck = cont->table[++itTablePos];
+  auto tmp(*this);
+  operator++();
+  return tmp;
+}
+ #include <iostream>
 
-      if (itTablePos >= cont->tableLength)
-	end = true;
-	  
-      return *this;
-    }
-}	
-// template <class T, class K>
-// bool Container<T, K>::iterator::operator==(const Container<T, K>::iterator &i)
-// {
-//   return p == i.p;
-// }
+template <class T, class K>
+bool Container<T, K>::iterator::operator==(const Container<T, K>::iterator &i)
+{
+  return ref == i.ref && itPos == i.itPos;
+}
 
+template <class T, class K>
+bool Container<T, K>::iterator::operator!=(const Container<T, K>::iterator &i)
+{
+  return !operator==(i);
+}
+
+template <class T, class K>
+typename Container<T, K>::iterator Container<T, K>::begin() const
+{
+  return iterator(this);
+}
 
 #endif // CONTAINER_HPP
