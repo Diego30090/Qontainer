@@ -32,6 +32,12 @@ public:
   virtual const char * what() const noexcept;
 };
 
+class ContainerIteratorEmptyTableException : public ContainerException
+{
+public:
+  virtual const char * what() const noexcept;
+};
+
 // Container
 template <class T, class K = std::string>
 class Container
@@ -90,17 +96,17 @@ public:
   Container(const Container &);
   ~Container();
 
-  Container & operator=(const Container &); // DA FARE
+  // Container & operator=(const Container &); // DA FARE
 
   unsigned int size() const;
 
   bool empty() const;
 
-  bool operator==(const Container &) const; // DA FARE
+  // bool operator==(const Container &) const; // DA FARE
 
   T & get(const K &);
 
-  // const T & get(cost K &) const;
+  // const T & get(cost K &) const; // DA FARE
   
   void put(const K &, const T &);
 
@@ -237,17 +243,17 @@ Container<T, K>::~Container()
   delete[] table;
 }
 
-template <class T, class K>
-bool Container<T, K>::operator==(const Container &c) const
-{
-  //DA FARE
-}
+// template <class T, class K>
+// bool Container<T, K>::operator==(const Container &c) const
+// {
+//   //DA FARE
+// }
 
-template <class T, class K>
-Container<T, K> & Container<T, K>::operator=(const Container &c)
-{
-  //DA FARE
-}
+// template <class T, class K>
+// Container<T, K> & Container<T, K>::operator=(const Container &c)
+// {
+//   //DA FARE
+// }
 
 template <class T, class K>
 unsigned int Container<T, K>::size() const
@@ -317,6 +323,11 @@ const char * ContainerDuplicateKeyException::what() const noexcept
   return "Inserimento di un valore chiave duplicato";
 }
 
+const char * ContainerIteratorEmptyTableException::what() const noexcept
+{
+  return "Si è cercato di dichiarare un iteratore a Container vuoto";
+}
+
 // IMPLEMENTAZIONE ITERATORI
 template <class T, class K>
 Container<T, K>::iterator::iterator(Container<T, K> *c) : cont(c),
@@ -325,11 +336,20 @@ Container<T, K>::iterator::iterator(Container<T, K> *c) : cont(c),
 							  itTablePos(0),
 							  end(false)
 {
+  if (c->empty())
+    throw ContainerIteratorEmptyTableException();
+  
   while (!buck && itTablePos < cont->tableLength)
     {
       ++itTablePos;
       buck = getTable(cont);
     }
+
+  if (itTablePos >= cont->tableLength)
+    throw ContainerException();
+
+  if (cont->tableSize == 1)
+    end = true;
 }
 
 template <class T, class K>
@@ -355,17 +375,13 @@ typename Container<T, K>::iterator & Container<T, K>::iterator::operator++()
 {
   if (++itPos < cont->tableSize)
     {
-      if (!buck)
-	{
-	  while (!buck && itTablePos < cont->tableLength)
-	    buck = cont->table[++itTablePos];
+      while (!buck && itTablePos < cont->tableLength)
+	buck = cont->table[++itTablePos];
 
-	  if (itTablePos >= cont->tableLength)
-	    end = true;
+      if (itTablePos >= cont->tableLength)
+	end = true;
 	  
-	  return *this;
-	}
-      //else
+      return *this;
     }
 }	
 // template <class T, class K>
