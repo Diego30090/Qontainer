@@ -26,12 +26,18 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        Gerarchia.cpp
+        Gerarchia.cpp \
+    Controller.cpp \
+    Model.cpp \
+    MainView.cpp
 
 HEADERS += \
         Container.hpp \
         DeepPtr.hpp \
-        Gerarchia.hpp
+        Gerarchia.hpp \
+    Controller.hpp \
+    Model.hpp \
+    MainView.hpp
 
 FORMS +=
 

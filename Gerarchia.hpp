@@ -12,7 +12,6 @@ private:
   unsigned int spi;
   std::string imgPath;
   
-  
 public:
   Articolo(std::string, std::string, float, unsigned int = 0, std::string = "");
   virtual ~Articolo();

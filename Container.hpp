@@ -232,7 +232,7 @@ Container<T, K>::Container(const Container &c) : table(new node*[c.tableLength])
 template <class T, class K>
 Container<T, K>::~Container()
 {
-  for (int i = 0; i < tableSize; ++i)
+  for (unsigned int i = 0; i < tableSize; ++i)
     destroy(table[i]);
 
   delete[] table;
