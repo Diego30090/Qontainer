@@ -8,14 +8,17 @@ class Controller : public QObject
   Q_OBJECT
 
 private:
+  QWidget *linkedView;
 
 public:
-  explicit Controller(QObject *parent = nullptr);
+  explicit Controller(QWidget *, QObject * = nullptr);
+  virtual ~Controller();
 
 signals:
-  void modelSearch(std::string);
 
-public slots: 
+public slots:
+  virtual void modelUpdate() = 0;
+
 };
 
 #endif // CONTROLLER_HPP

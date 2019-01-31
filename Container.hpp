@@ -3,7 +3,7 @@
 
 #include <string>
 #include <functional>
-#include <stdexcept>
+#include "ContainerException.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////
 // INTERFACCIA /////////////////////////////////////////////////////////////////
@@ -12,31 +12,6 @@
 // Forwarding
 template <class T, class K>
 class iterator;
-
-// Eccezioni lanciabili da Container
-class ContainerException : public std::exception
-{
-public:
-  virtual const char * what() const noexcept; // overriding
-};
-
-class ContainerCellNotFoundException : public ContainerException
-{
-public:
-  virtual const char * what() const noexcept; // overriding
-};
-
-class ContainerDuplicateKeyException : public ContainerException
-{
-public:
-  virtual const char * what() const noexcept; // overriding
-};
-
-class ContainerIteratorEmptyTableException : public ContainerException
-{
-public:
-  virtual const char * what() const noexcept; // overriding
-};
 
 // Container
 template <class T, class K = std::string>
@@ -300,27 +275,6 @@ void Container<T, K>::remove(const K &k)
   remove(tmp, k);
   tableSize--;
   //checkResize();
-}
-
-// IMPLEMENTAZIONE ECCEZIONI
-const char * ContainerException::what() const noexcept
-{
-  return "Errore sconosciuto Container";
-}
-
-const char * ContainerCellNotFoundException::what() const noexcept
-{
-  return "Nessuna voce trovata con la chiave inserita";
-}
-
-const char * ContainerDuplicateKeyException::what() const noexcept
-{
-  return "Inserimento di un valore chiave duplicato";
-}
-
-const char * ContainerIteratorEmptyTableException::what() const noexcept
-{
-  return "Si è cercato di dichiarare un iteratore su un Container vuoto";
 }
 
 // IMPLEMENTAZIONE ITERATORI

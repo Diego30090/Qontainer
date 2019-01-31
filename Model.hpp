@@ -1,10 +1,8 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-#include <string>
 #include <QObject>
 #include <QVector>
-//#include "controller.hpp"
 #include "Gerarchia.hpp"
 #include "DeepPtr.hpp"
 #include "Container.hpp"
@@ -16,24 +14,31 @@ class Model : public QObject
   Q_OBJECT
 
 private:
-  Container<DeepPtr<Articolo>, std::string> box;
+  QString containerPath;
+  Container<DeepPtr<Articolo>, std::string> *box;
 
-  QVector<Controller * const> subscription;
+//  QVector<Controller const * const> subscription;
+//  void notify();
 
 public:
   explicit Model(QObject *parent = nullptr);
 
-  // Metodi per accedere alla subscription
-  //void attach(Controller * const);
-  //void detach(Controller * const);
-
-  // Metodi per la richiesta dei dati
+  // Metodi per la gestione dei dati
+  QList<DeepPtr<Articolo>> getData() const;
 
 signals:
   void notify();
 
 public slots:
+  // Metodi per la gestione dei box
+  void newBox();
+  void deleteBox();
+  void saveBox() const;
+  void saveBoxAs() const;
 
+//  // Metodi per la gestione della subscription
+//  void attach(Controller const * const);
+//  void detach(Controller const * const);
 
 };
 

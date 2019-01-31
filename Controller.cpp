@@ -1,6 +1,5 @@
 #include "Controller.hpp"
 
-Controller::Controller(QObject *parent) : QObject(parent)
-{
+Controller::Controller(QWidget *view, QObject *parent) : QObject(parent), linkedView(view) {}
 
-}
+Controller::~Controller() {}

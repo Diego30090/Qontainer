@@ -1,5 +1,4 @@
 #include <QApplication>
-#include "Controller.hpp"
 #include "MainView.hpp"
 
 int main(int argc, char *argv[])

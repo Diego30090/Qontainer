@@ -27,17 +27,23 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         Gerarchia.cpp \
-    Controller.cpp \
-    Model.cpp \
-    MainView.cpp
+        Controller.cpp \
+        Model.cpp \
+        MainView.cpp \
+        ContainerException.cpp \
+    MainController.cpp \
+    View.cpp
 
 HEADERS += \
         Container.hpp \
         DeepPtr.hpp \
         Gerarchia.hpp \
-    Controller.hpp \
-    Model.hpp \
-    MainView.hpp
+        Controller.hpp \
+        Model.hpp \
+        MainView.hpp \
+        ContainerException.hpp \
+    MainController.hpp \
+    View.hpp
 
 FORMS +=
 
