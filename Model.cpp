@@ -133,64 +133,95 @@ void Model::saveBox() const
   if (i >= OPEN_FILE_ATTEMPTS) throw ModelFileNotAvailableException();
 
   writeStream->writeStartDocument();
+  writeStream->writeStartElement(QStringLiteral("box"));
 
   for (auto it = box->begin(); !it.isEnd(); ++it)
     {
-      QString elementName;
+//      QString elementName;
+//      if (dynamic_cast<Album *>(&**it))
+//        {
+//          elementName = QStringLiteral("Album");
+//        }
+//      else if (dynamic_cast<ElettBruno *>(&**it))
+//        {
+//          if (dynamic_cast<Computer *>(&**it))
+//            {
+//              elementName = QStringLiteral("Computer");
+//            }
+//          else if (dynamic_cast<Smartphone *>(&**it))
+//            {
+//              elementName = QStringLiteral("Smartphone");
+//            }
+//        }
+
+      writeStream->writeStartElement(QStringLiteral("entry"));
+
+      writeStream->writeStartElement(QStringLiteral("articolo"));
+
+      writeStream->writeTextElement(QStringLiteral("id"), QString::fromStdString((*it)->getId()));
+      writeStream->writeTextElement(QStringLiteral("nome"), QString::fromStdString((*it)->getNome()));
+      writeStream->writeTextElement(QStringLiteral("prezzoListino"), QString().setNum((*it)->getPrezzoListino()));
+      writeStream->writeTextElement(QStringLiteral("spi"), QString().setNum((*it)->getSPI()));
+      writeStream->writeTextElement(QStringLiteral("imgPath"), QString::fromStdString((*it)->getImgPath()));
+
       if (dynamic_cast<Album *>(&**it))
         {
-          elementName = QStringLiteral("Album");
-        }
-      else if (dynamic_cast<ElettBruno *>(&**it))
-        {
-          if (dynamic_cast<Computer *>(&**it))
-            {
-              elementName = QStringLiteral("Computer");
-            }
-          else if (dynamic_cast<Smartphone *>(&**it))
-            {
-              elementName = QStringLiteral("Smartphone");
-            }
-        }
+          writeStream->writeStartElement(QStringLiteral("album"));
 
-      writeStream->writeStartElement(elementName);
-      writeStream->writeAttribute(QStringLiteral("id"), QString::fromStdString((*it)->getId()));
-      writeStream->writeAttribute(QStringLiteral("nome"), QString::fromStdString((*it)->getNome()));
-      writeStream->writeAttribute(QStringLiteral("prezzoListino"), QString().setNum((*it)->getPrezzoListino()));
-      writeStream->writeAttribute(QStringLiteral("spi"), QString().setNum((*it)->getSPI()));
-      writeStream->writeAttribute(QStringLiteral("imgPath"), QString::fromStdString((*it)->getImgPath()));
-
-      if (dynamic_cast<Album *>(&**it))
-        {
           auto tmp = dynamic_cast<Album *>(&**it);
-          writeStream->writeAttribute(QStringLiteral("artista"), QString::fromStdString(tmp->getArtista()));
-          writeStream->writeAttribute(QStringLiteral("compilation"), QString().setNum(tmp->isCompilation()));
+
+          writeStream->writeTextElement(QStringLiteral("artista"), QString::fromStdString(tmp->getArtista()));
+          writeStream->writeTextElement(QStringLiteral("compilation"), QString().setNum(tmp->isCompilation()));
+
           delete tmp;
+
+          writeStream->writeEndElement(); // album
         }
       else if (dynamic_cast<ElettBruno *>(&**it))
         {
+          writeStream->writeStartElement(QStringLiteral("elettBruno"));
+
           auto tmp = dynamic_cast<ElettBruno *>(&**it);
-          writeStream->writeAttribute(QStringLiteral("usato"), QString().setNum(tmp->isUsato()));
+
+          writeStream->writeTextElement(QStringLiteral("usato"), QString().setNum(tmp->isUsato()));
+
           delete tmp;
 
           if (dynamic_cast<Computer *>(&**it))
             {
+              writeStream->writeStartElement(QStringLiteral("computer"));
+
               auto tmp = dynamic_cast<Computer *>(&**it);
-              writeStream->writeAttribute(QStringLiteral("portatile"), QString().setNum(tmp->isPortatile()));
+
+              writeStream->writeTextElement(QStringLiteral("portatile"), QString().setNum(tmp->isPortatile()));
+
               delete tmp;
+
+              writeStream->writeEndElement(); // computer
             }
           else if (dynamic_cast<Smartphone *>(&**it))
             {
+              writeStream->writeStartElement(QStringLiteral("smartphone"));
+
               auto tmp = dynamic_cast<Smartphone *>(&**it);
-              writeStream->writeAttribute(QStringLiteral("extendedWarranty"), QString().setNum(tmp->hasExtendedWarranty()));
+
+              writeStream->writeTextElement(QStringLiteral("extendedWarranty"), QString().setNum(tmp->hasExtendedWarranty()));
+
               delete tmp;
+
+              writeStream->writeEndElement(); // smartphone
             }
+
+          writeStream->writeEndElement(); // elettBruno
+
         }
 
-      writeStream->writeEndElement();
+      writeStream->writeEndElement(); // articolo
+      writeStream->writeEndElement(); // id
 
     }
 
+  writeStream->writeEndElement();
   writeStream->writeEndDocument();
   f->close();
 }
