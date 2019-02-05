@@ -164,50 +164,42 @@ void Model::saveBox() const
       writeStream->writeTextElement(QStringLiteral("spi"), QString().setNum((*it)->getSPI()));
       writeStream->writeTextElement(QStringLiteral("imgPath"), QString::fromStdString((*it)->getImgPath()));
 
-      if (dynamic_cast<Album *>(&**it))
+      if (dynamic_cast<Album *>(&*it))
         {
           writeStream->writeStartElement(QStringLiteral("album"));
 
-          auto tmp = dynamic_cast<Album *>(&**it);
+          auto tmp = dynamic_cast<Album *>(&(*it));
 
           writeStream->writeTextElement(QStringLiteral("artista"), QString::fromStdString(tmp->getArtista()));
           writeStream->writeTextElement(QStringLiteral("compilation"), QString().setNum(tmp->isCompilation()));
 
-          delete tmp;
-
           writeStream->writeEndElement(); // album
         }
-      else if (dynamic_cast<ElettBruno *>(&**it))
+      else if (dynamic_cast<ElettBruno *>(&*it))
         {
           writeStream->writeStartElement(QStringLiteral("elettBruno"));
 
-          auto tmp = dynamic_cast<ElettBruno *>(&**it);
+          auto tmp = dynamic_cast<ElettBruno *>(&*it);
 
           writeStream->writeTextElement(QStringLiteral("usato"), QString().setNum(tmp->isUsato()));
 
-          delete tmp;
-
-          if (dynamic_cast<Computer *>(&**it))
+          if (dynamic_cast<Computer *>(&*it))
             {
               writeStream->writeStartElement(QStringLiteral("computer"));
 
-              auto tmp = dynamic_cast<Computer *>(&**it);
+              auto tmp = dynamic_cast<Computer *>(&(*it));
 
               writeStream->writeTextElement(QStringLiteral("portatile"), QString().setNum(tmp->isPortatile()));
 
-              delete tmp;
-
               writeStream->writeEndElement(); // computer
             }
-          else if (dynamic_cast<Smartphone *>(&**it))
+          else if (dynamic_cast<Smartphone *>(&(*it)))
             {
               writeStream->writeStartElement(QStringLiteral("smartphone"));
 
-              auto tmp = dynamic_cast<Smartphone *>(&**it);
+              auto tmp = dynamic_cast<Smartphone *>(&(*it));
 
               writeStream->writeTextElement(QStringLiteral("extendedWarranty"), QString().setNum(tmp->hasExtendedWarranty()));
-
-              delete tmp;
 
               writeStream->writeEndElement(); // smartphone
             }
@@ -228,8 +220,6 @@ void Model::saveBox() const
 
 void Model::changeBoxPath(QString path)
 {
-  //if (!box) throw ModelBoxNotOpenException();
-
   containerPath = path;
 }
 

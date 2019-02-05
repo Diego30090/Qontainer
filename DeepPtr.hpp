@@ -24,6 +24,7 @@ public:
   DeepPtr & operator=(const DeepPtr &);
   T & operator*() const;
   T * operator->() const;
+  T * operator&() const;
 
   bool operator==(const DeepPtr &) const; // se punta allo stesso T
   bool operator!=(const DeepPtr &) const;
@@ -69,6 +70,12 @@ T & DeepPtr<T>::operator*() const
 
 template <class T>
 T * DeepPtr<T>::operator->() const
+{
+  return p;
+}
+
+template <class T>
+T * DeepPtr<T>::operator&() const
 {
   return p;
 }
