@@ -14,7 +14,7 @@ private:
   
 public:
   Articolo(std::string, std::string, float, unsigned int = 0, std::string = "");
-  virtual ~Articolo();
+  virtual ~Articolo() = default;
   
   std::string getId() const;
 

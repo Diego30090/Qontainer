@@ -7,8 +7,6 @@ Articolo::Articolo(std::string ID, std::string NOME,
 					   spi(SPI), imgPath(IMG_PATH)
 {}
 
-Articolo::~Articolo() {}
-
 std::string Articolo::getId() const
 {
   return id;

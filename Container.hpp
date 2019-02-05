@@ -280,10 +280,10 @@ void Container<T, K>::remove(const K &k)
 // IMPLEMENTAZIONE ITERATORI
 template <class T, class K>
 Container<T, K>::iterator::iterator(Container<T, K> const *c) : ref(c),
-							  itArrayLength(c->tableSize),
-							  itArray(new node*[c->tableSize]),
-							  itPos(0),
-							  end(c->tableSize == 1 ? true : false)
+								itArray(new node*[c->tableSize]),
+								itArrayLength(c->tableSize),
+								itPos(0),
+								end(false)
 {
   if (c->empty())
     throw ContainerIteratorEmptyTableException();
@@ -303,8 +303,8 @@ Container<T, K>::iterator::iterator(Container<T, K> const *c) : ref(c),
 template <class T, class K>
 Container<T, K>::iterator::iterator(const Container<T, K>::iterator &it) :
   ref(it.ref),
-  itArrayLength(it.itArrayLength),
   itArray(new node*[it.itArrayLength]),
+  itArrayLength(it.itArrayLength),
   itPos(it.itPos),
   end(it.end)
 {
@@ -358,7 +358,6 @@ typename Container<T, K>::iterator Container<T, K>::iterator::operator++(int)
   operator++();
   return tmp;
 }
- #include <iostream>
 
 template <class T, class K>
 bool Container<T, K>::iterator::operator==(const Container<T, K>::iterator &i)

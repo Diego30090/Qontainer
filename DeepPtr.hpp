@@ -19,7 +19,7 @@ public:
   DeepPtr();
   DeepPtr(T *);
   DeepPtr(const DeepPtr &);
-  ~DeepPtr();
+  virtual ~DeepPtr();
   
   DeepPtr & operator=(const DeepPtr &);
   T & operator*() const;
@@ -55,7 +55,7 @@ DeepPtr<T> & DeepPtr<T>::operator=(const DeepPtr &dp)
   if (*this != dp)
     {
       delete p;
-      p(dp.p ? dp.p->clone() : nullptr);
+      p = dp.p ? dp.p->clone() : nullptr;
     }
 
   return *this;
