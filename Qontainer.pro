@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,8 +31,8 @@ SOURCES += \
         Model.cpp \
         MainView.cpp \
         ContainerException.cpp \
-    MainController.cpp \
-    View.cpp
+        MainController.cpp \
+        View.cpp
 
 HEADERS += \
         Container.hpp \
@@ -42,8 +42,8 @@ HEADERS += \
         Model.hpp \
         MainView.hpp \
         ContainerException.hpp \
-    MainController.hpp \
-    View.hpp
+        MainController.hpp \
+        View.hpp
 
 FORMS +=
 

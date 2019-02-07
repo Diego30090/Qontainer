@@ -1,7 +1,6 @@
 #include "Model.hpp"
-#include <QDebug>
 
-// Implementazione eccezioni
+// IMPLEMENTAZIONE ECCEZIONI
 const char * ModelException::what() const noexcept
 {
   return "Errore sconosciuto Modello";
@@ -9,7 +8,17 @@ const char * ModelException::what() const noexcept
 
 const char * ModelBoxNotOpenException::what() const noexcept
 {
-  return "Box non aperto";
+  return "Si è cercato di effettuare un'operazione a box chiuso";
+}
+
+const char * ModelBoxNotClosedException::what() const noexcept
+{
+  return "Si è cercato di effettuare un'operazione a box aperto";
+}
+
+const char * ModelBoxPathNotSetException::what() const noexcept
+{
+  return "Non è stato impostato un percorso per il box";
 }
 
 const char * ModelFileNotAvailableException::what() const noexcept
@@ -17,19 +26,248 @@ const char * ModelFileNotAvailableException::what() const noexcept
   return "Errore nell'apertura del file";
 }
 
-// Implementazione Model
+const char * ModelBadTypeException::what() const noexcept
+{
+  return "Operazione non consentita su questo tipo di dato";
+}
+
+
+// IMPLEMENTAZIONE MODEL
 Model::Model(QObject *parent) : QObject(parent), containerPath(QStringLiteral("")), box(nullptr) {}
 
-QList<DeepPtr<Articolo>> Model::getData() const
+const DeepPtr<Articolo> Model::getArticolo(QString id) const
+{
+  return box->get(id.toStdString())->clone();
+}
+
+QList<QString> Model::getAllArticolo() const
 {
   if (!box) throw ModelBoxNotOpenException();
 
-  QList<DeepPtr<Articolo>> res;
+  QList<QString> res;
 
   for (auto it = box->begin(); !it.isEnd(); ++it)
-    res.push_back(*it);
+    res.push_back(QString::fromStdString(it.getKey()));
 
   return res;
+}
+
+QList<QString> Model::getArticoloByNome(QString nome) const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  std::string n = nome.toStdString();
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    if ((*it)->getNome() == n)
+      res.push_back(QString::fromStdString(it.getKey()));
+
+  return res;
+}
+
+QList<QString> Model::getArticoloByPrezzoListino(float pl) const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    if ((*it)->getPrezzoListino() == pl)
+      res.push_back(QString::fromStdString(it.getKey()));
+
+  return res;
+}
+
+QList<QString> Model::getArticoloBySPI(unsigned int spi) const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    if ((*it)->getSPI() == spi)
+      res.push_back(QString::fromStdString(it.getKey()));
+
+  return res;
+}
+
+QList<QString> Model::getAllAlbum() const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    if (dynamic_cast<Album *>(&*it))
+      res.push_back(QString::fromStdString(it.getKey()));
+
+  return res;
+}
+
+QList<QString> Model::getAlbumByArtista(QString artista) const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  std::string a = artista.toStdString();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    {
+      auto ptr = dynamic_cast<Album *>(&*it);
+      if (ptr && ptr->getArtista() == a)
+        res.push_back(QString::fromStdString(it.getKey()));
+    }
+
+  return res;
+}
+
+QList<QString> Model::getAlbumIfCompilation(bool c) const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    {
+      auto ptr = dynamic_cast<Album *>(&*it);
+      if (ptr && ptr->isCompilation() == c)
+        res.push_back(QString::fromStdString(it.getKey()));
+    }
+
+  return res;
+}
+
+QList<QString> Model::getAllElettBruno() const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    if (dynamic_cast<ElettBruno *>(&*it))
+      res.push_back(QString::fromStdString(it.getKey()));
+
+  return res;
+}
+
+QList<QString> Model::getElettBrunoIfUsato(bool u) const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    {
+      auto ptr = dynamic_cast<ElettBruno *>(&*it);
+      if (ptr && ptr->isUsato() == u)
+        res.push_back(QString::fromStdString(it.getKey()));
+    }
+
+  return res;
+}
+
+QList<QString> Model::getAllComputer() const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    if (dynamic_cast<Computer *>(&*it))
+      res.push_back(QString::fromStdString(it.getKey()));
+
+  return res;
+}
+
+QList<QString> Model::getComputerIfPortatile(bool p) const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    {
+      auto ptr = dynamic_cast<Computer *>(&*it);
+      if (ptr && ptr->isPortatile() == p)
+        res.push_back(QString::fromStdString(it.getKey()));
+    }
+
+  return res;
+}
+
+QList<QString> Model::getAllSmartphone() const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    if (dynamic_cast<Smartphone *>(&*it))
+      res.push_back(QString::fromStdString(it.getKey()));
+
+  return res;
+}
+
+QList<QString> Model::getSmartphoneIfExtWarr(bool ew) const
+{
+  if (!box) throw ModelBoxNotOpenException();
+
+  QList<QString> res;
+
+  for (auto it = box->begin(); !it.isEnd(); ++it)
+    {
+      auto ptr = dynamic_cast<Smartphone *>(&*it);
+      if (ptr && ptr->hasExtendedWarranty() == ew)
+        res.push_back(QString::fromStdString(it.getKey()));
+    }
+
+  return res;
+}
+
+QList<QString> Model::filterByPrice(QList<QString> l, priceFilter pf, float prezzo)
+{
+  switch (pf)
+    {
+    case uguale:
+      for (auto it = l.begin(); it != l.end(); ++it)
+        if (box->get(it->toStdString())->getPrezzo() != prezzo)
+          it-- = l.erase(it);
+      break;
+
+    case diverso:
+      for (auto it = l.begin(); it != l.end(); ++it)
+        if (box->get(it->toStdString())->getPrezzo() == prezzo)
+          it-- = l.erase(it);
+      break;
+
+    case maggiore:
+      for (auto it = l.begin(); it != l.end(); ++it)
+        if (box->get(it->toStdString())->getPrezzo() <= prezzo)
+          it-- = l.erase(it);
+      break;
+
+    case minore:
+      for (auto it = l.begin(); it != l.end(); ++it)
+        if (box->get(it->toStdString())->getPrezzo() >= prezzo)
+          it-- = l.erase(it);
+      break;
+
+    case maggioreUguale:
+      for (auto it = l.begin(); it != l.end(); ++it)
+        if (box->get(it->toStdString())->getPrezzo() < prezzo)
+          it-- = l.erase(it);
+      break;
+
+    case minoreUguale:
+      for (auto it = l.begin(); it != l.end(); ++it)
+        if (box->get(it->toStdString())->getPrezzo() > prezzo)
+          it-- = l.erase(it);
+      break;
+    }
+  return l;
 }
 
 bool Model::isOpen() const
@@ -39,7 +277,7 @@ bool Model::isOpen() const
 
 void Model::newBox()
 {
-  if (box) throw 3; //////////////////////////////////////////////////////////////////////////////////////
+  if (box) throw ModelBoxNotClosedException();
 
   box = new Container<DeepPtr<Articolo>, std::string>;
   emit notify();
@@ -47,64 +285,73 @@ void Model::newBox()
 
 void Model::openBox()
 {
-  if (box) throw 2; //////////////////////////////////////////////////////////////////////////////////////
+  if (box) throw ModelBoxNotClosedException();
 
   newBox();
 
   auto f = new QFile(containerPath);
 
-  auto readStream = new QXmlStreamReader(f);
+  QDomDocument saveFile;
 
   unsigned int i;
   for (i = 0; !f->open(QIODevice::ReadOnly) && i < OPEN_FILE_ATTEMPTS; ++i);
   if (i >= OPEN_FILE_ATTEMPTS) throw ModelFileNotAvailableException();
 
-  while (!readStream->atEnd())
+  if (!saveFile.setContent(f)) throw ModelFileNotAvailableException();
+
+  QDomElement root = saveFile.firstChildElement(QStringLiteral("box"));
+
+  for (QDomElement elt = root.firstChildElement(QStringLiteral("entry")); !elt.isNull(); elt = elt.nextSiblingElement("entry"))
     {
-      readStream->readNext();
+      QDomElement articolo = elt.firstChildElement(QStringLiteral("articolo"));
 
-      qDebug() << readStream->name().toString();
-
-      if (readStream->name().toString() == "Album")
+      if (!articolo.firstChildElement(QStringLiteral("album")).isNull())
         {
-          auto att = readStream->attributes();
+          QDomElement album = articolo.firstChildElement(QStringLiteral("album"));
 
-          box->put(att.at(0).value().toString().toStdString(),
-                   new Album(att.at(5).value().toString().toStdString(),
-                             att.at(6).value().toString().toUInt(),
-                             att.at(0).value().toString().toStdString(),
-                             att.at(1).value().toString().toStdString(),
-                             att.at(2).value().toString().toFloat(),
-                             att.at(3).value().toString().toUInt(),
-                             att.at(4).value().toString().toStdString()));
+          box->put(articolo.firstChildElement(QStringLiteral("id")).text().toStdString(),
+                   new Album(album.firstChildElement(QStringLiteral("artista")).text().toStdString(),
+                             album.firstChildElement(QStringLiteral("compilation")).text().toUInt(),
+                             articolo.firstChildElement(QStringLiteral("id")).text().toStdString(),
+                             articolo.firstChildElement(QStringLiteral("nome")).text().toStdString(),
+                             articolo.firstChildElement(QStringLiteral("prezzoListino")).text().toFloat(),
+                             articolo.firstChildElement(QStringLiteral("spi")).text().toUInt(),
+                             articolo.firstChildElement(QStringLiteral("imgPath")).text().toStdString()));
         }
-      else if (readStream->name().toString() == "Computer")
+      else if (!articolo.firstChildElement(QStringLiteral("elettBruno")).isNull())
         {
-          auto att = readStream->attributes();
+          QDomElement elettBruno = articolo.firstChildElement(QStringLiteral("elettBruno"));
 
-          box->put(att.at(0).value().toString().toStdString(),
-                   new Computer(att.at(5).value().toString().toUInt(),
-                                att.at(6).value().toString().toUInt(),
-                                att.at(0).value().toString().toStdString(),
-                                att.at(1).value().toString().toStdString(),
-                                att.at(2).value().toString().toFloat(),
-                                att.at(3).value().toString().toUInt(),
-                                att.at(4).value().toString().toStdString()));
-        }
-      else if (readStream->name().toString() == "Smartphone")
-        {
-          auto att = readStream->attributes();
+          if (!elettBruno.firstChildElement(QStringLiteral("computer")).isNull())
+            {
+              QDomElement computer = elettBruno.firstChildElement(QStringLiteral("computer"));
 
-          box->put(att.at(0).value().toString().toStdString(),
-                   new Smartphone(att.at(5).value().toString().toUInt(),
-                                  att.at(6).value().toString().toUInt(),
-                                  att.at(0).value().toString().toStdString(),
-                                  att.at(1).value().toString().toStdString(),
-                                  att.at(2).value().toString().toFloat(),
-                                  att.at(3).value().toString().toUInt(),
-                                  att.at(4).value().toString().toStdString()));
+              box->put(articolo.firstChildElement(QStringLiteral("id")).text().toStdString(),
+                       new Computer(computer.firstChildElement(QStringLiteral("portatile")).text().toUInt(),
+                                    elettBruno.firstChildElement(QStringLiteral("usato")).text().toUInt(),
+                                    articolo.firstChildElement(QStringLiteral("id")).text().toStdString(),
+                                    articolo.firstChildElement(QStringLiteral("nome")).text().toStdString(),
+                                    articolo.firstChildElement(QStringLiteral("prezzoListino")).text().toFloat(),
+                                    articolo.firstChildElement(QStringLiteral("spi")).text().toUInt(),
+                                    articolo.firstChildElement(QStringLiteral("imgPath")).text().toStdString()));
+            }
+          else if (!elettBruno.firstChildElement(QStringLiteral("smartphone")).isNull())
+            {
+              QDomElement smartphone = elettBruno.firstChildElement(QStringLiteral("smartphone"));
+
+              box->put(articolo.firstChildElement(QStringLiteral("id")).text().toStdString(),
+                       new Smartphone(smartphone.firstChildElement(QStringLiteral("extendedWarranty")).text().toUInt(),
+                                      elettBruno.firstChildElement(QStringLiteral("usato")).text().toUInt(),
+                                      articolo.firstChildElement(QStringLiteral("id")).text().toStdString(),
+                                      articolo.firstChildElement(QStringLiteral("nome")).text().toStdString(),
+                                      articolo.firstChildElement(QStringLiteral("prezzoListino")).text().toFloat(),
+                                      articolo.firstChildElement(QStringLiteral("spi")).text().toUInt(),
+                                      articolo.firstChildElement(QStringLiteral("imgPath")).text().toStdString()));
+            }
         }
     }
+
+  f->close();
 }
 
 void Model::closeBox()
@@ -121,7 +368,7 @@ void Model::saveBox() const
 {
   if (!box) throw ModelBoxNotOpenException();
 
-  if (containerPath == "") throw 1; /////////////////////////////////////////////////////////////////////////////
+  if (containerPath == "") throw ModelBoxPathNotSetException();
 
   auto f = new QFile(containerPath);
 
@@ -137,24 +384,25 @@ void Model::saveBox() const
 
   for (auto it = box->begin(); !it.isEnd(); ++it)
     {
-//      QString elementName;
-//      if (dynamic_cast<Album *>(&**it))
-//        {
-//          elementName = QStringLiteral("Album");
-//        }
-//      else if (dynamic_cast<ElettBruno *>(&**it))
-//        {
-//          if (dynamic_cast<Computer *>(&**it))
-//            {
-//              elementName = QStringLiteral("Computer");
-//            }
-//          else if (dynamic_cast<Smartphone *>(&**it))
-//            {
-//              elementName = QStringLiteral("Smartphone");
-//            }
-//        }
+      QString elementType;
+      if (dynamic_cast<Album *>(&**it))
+        {
+          elementType = QStringLiteral("Album");
+        }
+      else if (dynamic_cast<ElettBruno *>(&**it))
+        {
+          if (dynamic_cast<Computer *>(&**it))
+            {
+              elementType = QStringLiteral("Computer");
+            }
+          else if (dynamic_cast<Smartphone *>(&**it))
+            {
+              elementType = QStringLiteral("Smartphone");
+            }
+        }
 
       writeStream->writeStartElement(QStringLiteral("entry"));
+      writeStream->writeAttribute(QStringLiteral("tipo"), elementType);
 
       writeStream->writeStartElement(QStringLiteral("articolo"));
 
@@ -168,7 +416,7 @@ void Model::saveBox() const
         {
           writeStream->writeStartElement(QStringLiteral("album"));
 
-          auto tmp = dynamic_cast<Album *>(&(*it));
+          auto tmp = dynamic_cast<Album *>(&*it);
 
           writeStream->writeTextElement(QStringLiteral("artista"), QString::fromStdString(tmp->getArtista()));
           writeStream->writeTextElement(QStringLiteral("compilation"), QString().setNum(tmp->isCompilation()));
@@ -187,17 +435,17 @@ void Model::saveBox() const
             {
               writeStream->writeStartElement(QStringLiteral("computer"));
 
-              auto tmp = dynamic_cast<Computer *>(&(*it));
+              auto tmp = dynamic_cast<Computer *>(&*it);
 
               writeStream->writeTextElement(QStringLiteral("portatile"), QString().setNum(tmp->isPortatile()));
 
               writeStream->writeEndElement(); // computer
             }
-          else if (dynamic_cast<Smartphone *>(&(*it)))
+          else if (dynamic_cast<Smartphone *>(&*it))
             {
               writeStream->writeStartElement(QStringLiteral("smartphone"));
 
-              auto tmp = dynamic_cast<Smartphone *>(&(*it));
+              auto tmp = dynamic_cast<Smartphone *>(&*it);
 
               writeStream->writeTextElement(QStringLiteral("extendedWarranty"), QString().setNum(tmp->hasExtendedWarranty()));
 
@@ -226,23 +474,102 @@ void Model::changeBoxPath(QString path)
 void Model::insert(const DeepPtr<Articolo> &i)
 {
   box->put(i->getId(), i);
+
+  emit notify();
 }
 
-//void Model::attach(Controller const * const c)
-//{
-//  subscription.push_back(c);
-//}
+void Model::remove(QString id)
+{
+  box->remove(id.toStdString());
 
-//void Model::detach(Controller const * const c)
-//{
-//  bool found = false;
+  emit notify();
+}
 
-//  for(auto seek = subscription.begin(); !found && seek != subscription.end(); ++seek)
-//    {
-//      if (c == *seek)
-//        {
-//          subscription.erase(seek);
-//          found = true;
-//        }
-//    }
-//}
+void Model::remove(QList<QString> l)
+{
+  for (int i = 0; i < l.size(); ++i)
+    box->remove(l[i].toStdString());
+
+  emit notify();
+}
+
+void Model::setArticoloNome(QString id, QString nome) const
+{
+  box->get(id.toStdString())->setNome(nome.toStdString());
+
+  emit notify();
+}
+
+void Model::setArticoloPrezzoListino(QString id, float pl) const
+{
+  box->get(id.toStdString())->setPrezzoListino(pl);
+
+  emit notify();
+}
+
+void Model::setArticoloSPI(QString id, unsigned int spi) const
+{
+  box->get(id.toStdString())->setSPI(spi);
+
+  emit notify();
+}
+
+void Model::setAlbumArtista(QString id, QString art) const
+{
+  auto ptr = dynamic_cast<Album *>(&box->get(id.toStdString()));
+
+  if (ptr)
+    ptr->setArtista(art.toStdString());
+  else
+    throw ModelBadTypeException();
+
+  emit notify();
+}
+
+void Model::setAlbumCompilation(QString id, bool c) const
+{
+  auto ptr = dynamic_cast<Album *>(&box->get(id.toStdString()));
+
+  if (ptr)
+    ptr->setCompilation(c);
+  else
+    throw ModelBadTypeException();
+
+  emit notify();
+}
+
+void Model::setElettBrunoUsato(QString id, bool u) const
+{
+  auto ptr = dynamic_cast<ElettBruno *>(&box->get(id.toStdString()));
+
+  if (ptr)
+    ptr->setUsato(u);
+  else
+    throw ModelBadTypeException();
+
+  emit notify();
+}
+
+void Model::setComputerPortatile(QString id, bool p) const
+{
+  auto ptr = dynamic_cast<Computer *>(&box->get(id.toStdString()));
+
+  if (ptr)
+    ptr->setPortatile(p);
+  else
+    throw ModelBadTypeException();
+
+  emit notify();
+}
+
+void Model::setSmartphoneExtWarr(QString id, bool ew) const
+{
+  auto ptr = dynamic_cast<Smartphone *>(&box->get(id.toStdString()));
+
+  if (ptr)
+    ptr->setExtendedWarranty(ew);
+  else
+    throw ModelBadTypeException();
+
+  emit notify();
+}

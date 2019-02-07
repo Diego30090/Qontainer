@@ -56,7 +56,7 @@ private:
 
   std::hash<K> keyHash;
   
-  unsigned int getIndex(const K &);
+  unsigned int getIndex(const K &) const;
 
   void checkResize();
   
@@ -76,10 +76,8 @@ public:
 
   // bool operator==(const Container &) const; // DA FARE
 
-  T & get(const K &);
+  T & get(const K &) const;
 
-  // const T & get(cost K &) const; // DA FARE
-  
   void put(const K &, const T &);
 
   void remove(const K &);
@@ -179,7 +177,7 @@ typename Container<T, K>::node * Container<T, K>::copy(node *n)
 
 // IMPLEMENTAZIONE TABLE
 template <class T, class K>
-unsigned int Container<T, K>::getIndex(const K &k)
+unsigned int Container<T, K>::getIndex(const K &k) const
 {
   return keyHash(k) % tableLength;
 }
@@ -238,7 +236,7 @@ bool Container<T, K>::empty() const
 }
 
 template <class T, class K>
-T & Container<T, K>::get(const K &k)
+T & Container<T, K>::get(const K &k) const
 // THROWS: ContainerCellNotFoundException
 {
   //unsigned long h = keyHash(k);
@@ -272,7 +270,7 @@ void Container<T, K>::remove(const K &k)
 
   if (!tmp) throw ContainerCellNotFoundException();
   
-  remove(tmp, k);
+  remove(tmp);
   tableSize--;
   //checkResize();
 }
