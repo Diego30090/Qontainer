@@ -11,15 +11,18 @@ class View : public QWidget
   Q_OBJECT
 
 private:
-  Model *linkedModel;
   Controller *linkedController;
+
+  virtual Controller * makeController() = 0;
 
 public:
   explicit View(QWidget *parent = nullptr);
+  virtual ~View();
 
-signals:
+  Controller * getController();
+  void setController(Controller *);
 
-public slots:
+  virtual void initialize() = 0;
 };
 
 #endif // VIEW_HPP

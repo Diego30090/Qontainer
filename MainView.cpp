@@ -1,11 +1,16 @@
 #include "MainView.hpp"
 
-MainView::MainView(QWidget *parent) : QWidget(parent)
+MainController * MainView::makeController()
+{
+  return new MainController(this);
+}
+
+MainView::MainView(QWidget *parent) : View(parent), hl(new QHBoxLayout(this)), sideWindow(nullptr)
 {
   this->resize(800, 500);
 
   // Layout orizzontale
-  auto h = new QHBoxLayout(this);
+  hl->setContentsMargins(0, 0, 0, 0);
 
   // Barra degli strumenti
   QToolBar *upperToolBar = new QToolBar(QStringLiteral("BarraDegliStrumenti"), this);
@@ -20,35 +25,41 @@ MainView::MainView(QWidget *parent) : QWidget(parent)
   upperToolBar->addAction(QStringLiteral("Ricerca"));
   upperToolBar->addAction(QStringLiteral("Nuovo Articolo"));
   upperToolBar->addAction(QStringLiteral("Elimina Articolo"));
-  connect(upperToolBar, SIGNAL(actionTriggered(QAction *)), this, SLOT(toolbarAction(QAction *))); // Collego le azioni della toolbar ad uno slot che emetterà il giusto segnale
-  h->setMenuBar(upperToolBar); // La metto come barra dei menù
+  connect(upperToolBar, SIGNAL(actionTriggered(QAction *)), this, SIGNAL(toolBarActionTriggered(QAction *)));
+  hl->setMenuBar(upperToolBar); // La metto come barra dei menù
 
   // Tabella
   QTableWidget *tab = new QTableWidget(this);
-  h->addWidget(tab);
-
-  //h->addWidget();
-
+  hl->addWidget(tab);
 }
 
-void MainView::toolbarAction(QAction *a)
+void MainView::initialize()
 {
-  auto opt = a->text();
+  setController(makeController());
 
-  if (opt == "Salva")
-    emit controllerSalva();
-  else if (opt == "Salva con Nome")
-    emit controllerSalvaConNome();
-  else if (opt == "Apri Box")
-    emit controllerApriBox();
-  else if (opt == "Chiudi Box")
-    emit controllerChiudiBox();
-  else if (opt == "Nuovo Box")
-    emit controllerNuovoBox();
-  else if (opt == "Ricerca")
-    emit controllerRicercaArticolo();
-  else if (opt == "Nuovo Articolo")
-    emit controllerNuovoArticolo();
-  else if (opt == "Elimina Articolo")
-    emit controllerEliminaArticolo();
+  ///////////////////////////////////////////// Vari connect
 }
+
+
+
+//void MainView::toolbarAction(QAction *a)
+//{
+//  auto opt = a->text();
+
+//  if (opt == "Salva")
+//    emit salva();
+//  else if (opt == "Salva con Nome")
+//    emit salvaConNome();
+//  else if (opt == "Apri Box")
+//    emit apriBox();
+//  else if (opt == "Chiudi Box")
+//    emit chiudiBox();
+//  else if (opt == "Nuovo Box")
+//    emit nuovoBox();
+//  else if (opt == "Ricerca")
+//    emit ricercaArticolo();
+//  else if (opt == "Nuovo Articolo")
+//    emit nuovoArticolo();
+//  else if (opt == "Elimina Articolo")
+//    emit eliminaArticolo();
+//}
