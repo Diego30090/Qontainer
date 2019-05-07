@@ -43,14 +43,10 @@ private:
 
   // table
   static const unsigned int INIT_TABLE_LENGTH = 5;
-
-  static const unsigned int INIT_TABLE_THRESHOLD = INIT_TABLE_LENGTH * 2;
   
   node **table;
   
   unsigned int tableLength;
-
-  unsigned int tableThreshold;
 
   unsigned int tableSize;
 
@@ -58,23 +54,15 @@ private:
   
   unsigned int getIndex(const K &) const;
 
-  void checkResize();
-  
-  void resize();
-
 public:
   
   Container();
   Container(const Container &);
   ~Container();
 
-  // Container & operator=(const Container &); // DA FARE
-
   unsigned int size() const;
 
   bool empty() const;
-
-  // bool operator==(const Container &) const; // DA FARE
 
   T & get(const K &) const;
 
@@ -111,10 +99,6 @@ public:
 
   // Metodi per la gestione degli iteratori
   iterator begin() const;
-
-  //iterator end();
-
-  //class const_iterator //DA FARE  
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -185,7 +169,6 @@ unsigned int Container<T, K>::getIndex(const K &k) const
 template <class T, class K>
 Container<T, K>::Container() : table(new node*[INIT_TABLE_LENGTH]),
 			       tableLength(INIT_TABLE_LENGTH),
-			       tableThreshold(INIT_TABLE_THRESHOLD),
 			       tableSize(0)
 {
   for (unsigned int i = 0; i < tableLength; ++i)
@@ -195,7 +178,6 @@ Container<T, K>::Container() : table(new node*[INIT_TABLE_LENGTH]),
 template <class T, class K>
 Container<T, K>::Container(const Container &c) : table(new node*[c.tableLength]),
 						 tableLength(c.tableLength),
-						 tableThreshold(c.tableThreshold),
 						 tableSize(c.tableSize)
 {
   for (unsigned int i = 0; i < tableSize; ++i)
@@ -210,18 +192,6 @@ Container<T, K>::~Container()
 
   delete[] table;
 }
-
-// template <class T, class K>
-// bool Container<T, K>::operator==(const Container &c) const
-// {
-//   //DA FARE
-// }
-
-// template <class T, class K>
-// Container<T, K> & Container<T, K>::operator=(const Container &c)
-// {
-//   //DA FARE
-// }
 
 template <class T, class K>
 unsigned int Container<T, K>::size() const
@@ -239,9 +209,6 @@ template <class T, class K>
 T & Container<T, K>::get(const K &k) const
 // THROWS: ContainerCellNotFoundException
 {
-  //unsigned long h = keyHash(k);
-  //int i = getIndex(k);
-
   node *tmp = search(table[getIndex(k)], k);
 
   if (!tmp) throw ContainerCellNotFoundException();
@@ -253,38 +220,37 @@ template <class T, class K>
 void Container<T, K>::put(const K &k, const T &obj)
 // THROWS: ContainerDuplicateKeyExeption
 {
-  //unsigned long h = keyHash(k);
-  //int i = getIndex(k);
-
   if(search(table[getIndex(k)], k)) throw ContainerDuplicateKeyException();
   
   insert(table[getIndex(k)], k, obj);
   tableSize++;
-  //checkResize();
 }
 
 template <class T, class K>
 void Container<T, K>::remove(const K &k)
+// THROWS: ContainerEmptyTableException, ContainerCellNotFoundException
 {
+  if (tableSize == 0) throw ContainerEmptyTableException();
+
   node *tmp = search(table[getIndex(k)], k);
 
   if (!tmp) throw ContainerCellNotFoundException();
   
   remove(tmp);
   tableSize--;
-  //checkResize();
 }
 
 // IMPLEMENTAZIONE ITERATORI
 template <class T, class K>
-Container<T, K>::iterator::iterator(Container<T, K> const *c) : ref(c),
-								itArray(new node*[c->tableSize]),
-								itArrayLength(c->tableSize),
-								itPos(0),
-								end(false)
+Container<T, K>::iterator::iterator(Container<T, K> const *c) :
+  ref(c),
+  itArray(new node*[c->tableSize]),
+  itArrayLength(c->tableSize),
+  itPos(0),
+  end(false)
+// THROWS: ContainerEmptyTableException
 {
-  if (c->empty())
-    throw ContainerIteratorEmptyTableException();
+  if (c->empty()) throw ContainerEmptyTableException();
   
   int j = 0;
   for (unsigned int i = 0; i < c->tableLength; ++i)

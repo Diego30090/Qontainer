@@ -1,16 +1,9 @@
 #include "Gerarchia.hpp"
 
 // Implementazione Articolo
-Articolo::Articolo(std::string ID, std::string NOME,
-		   float PREZZO, unsigned int SPI,
-		   std::string IMG_PATH) : id(ID), nome(NOME), prezzoListino(PREZZO),
-					   spi(SPI), imgPath(IMG_PATH)
+Articolo::Articolo(std::string NOME, float COSTO, unsigned int SPI)
+  : nome(NOME), costo(COSTO), spi(SPI)
 {}
-
-std::string Articolo::getId() const
-{
-  return id;
-}
 
 std::string Articolo::getNome() const
 {
@@ -22,14 +15,14 @@ void Articolo::setNome(std::string new_nome)
   nome = new_nome;
 }
 
-float Articolo::getPrezzoListino() const
+float Articolo::getCosto() const
 {
-  return prezzoListino;
+  return costo;
 }
 
-void Articolo::setPrezzoListino(float new_pl)
+void Articolo::setCosto(float new_pl)
 {
-  prezzoListino = new_pl;
+  costo = new_pl;
 }
 
 unsigned int Articolo::getSPI() const
@@ -42,81 +35,79 @@ void Articolo::setSPI(unsigned int new_spi)
   spi = new_spi;
 }
 
-std::string Articolo::getImgPath() const
-{
-  return imgPath;
-}
-
-void Articolo::setImgPath(std::string new_ip)
-{
-  imgPath = new_ip;
-}
-
-// Implementazione Album
-Album::Album(std::string ARTISTA, bool COMPILATION,
-	     std::string ID, std::string NOME,
-	     float PREZZO, unsigned int SPI,
-	     std::string IMG_PATH) : Articolo(ID, NOME, PREZZO, SPI, IMG_PATH),
-				     artista(ARTISTA),
-				     compilation(COMPILATION)
+// Implementazione Media
+Media::Media(unsigned int ANNO, std::string NOME, float COSTO, unsigned int SPI)
+  : Articolo (NOME, COSTO, SPI), anno(ANNO)
 {}
 
-std::string Album::getArtista() const
+unsigned int Media::getAnno() const
 {
-  return artista;
+  return anno;
 }
 
-void Album::setArtista(std::string new_artista)
+void Media::setAnno(unsigned int new_anno)
 {
-  artista = new_artista;
+  anno = new_anno;
 }
 
-bool Album::isCompilation() const
-{
-  return compilation;
-}
-
-void Album::setCompilation(bool is_comp)
-{
-  compilation = is_comp;
-}
-
-float Album::getPrezzo() const
-{
-  return getSPI() < 4
-		    ? getPrezzoListino()
-		    : getPrezzoListino() - (getPrezzoListino() * 0.1f * (getSPI() - 3));
-}
-
-Album * Album::clone() const
-{
-  return new Album(*this);
-}
-
-// Implementazione ElettBruno
-ElettBruno::ElettBruno(bool USATO,
-		       std::string ID, std::string NOME,
-		       float PREZZO, unsigned int SPI,
-		       std::string IMG_PATH) : Articolo(ID, NOME, PREZZO, SPI, IMG_PATH),
-					       usato(USATO)
+// Implementazione Elettronica
+Elettronica::Elettronica(bool USATO, std::string NOME, float COSTO, unsigned int SPI)
+  : Articolo(NOME, COSTO, SPI), usato(USATO)
 {}
 
-bool ElettBruno::isUsato() const
+bool Elettronica::isUsato() const
 {
   return usato;
 }
 
-void ElettBruno::setUsato(bool is_usato)
+void Elettronica::setUsato(bool is_usato)
 {
   usato = is_usato;
 }
 
+// Implementazione CD
+CD::CD(std::string ARTISTA, bool COMPILATION, unsigned int ANNO, std::string NOME, float COSTO, unsigned int SPI)
+  : Media(ANNO, NOME, COSTO, SPI), artista(ARTISTA), compilation(COMPILATION)
+{}
+
+std::string CD::getArtista() const
+{
+  return artista;
+}
+
+void CD::setArtista(std::string new_artista)
+{
+  artista = new_artista;
+}
+
+bool CD::isCompilation() const
+{
+  return compilation;
+}
+
+void CD::setCompilation(bool is_comp)
+{
+  compilation = is_comp;
+}
+
+float CD::getPrezzo() const
+{
+  return getCosto() + getCosto() * 0.05f;
+}
+
+unsigned int CD::getSconto() const
+{
+  return getSPI() < 4 ? 0 : (10 * (getSPI() - 3));
+}
+
+CD * CD::clone() const
+{
+  return new CD(*this);
+}
+
 // Implementazione Computer
-Computer::Computer(bool PORTATILE, bool USATO,
-		   std::string ID, std::string NOME,
-		   float PREZZO, unsigned int SPI,
-		   std::string IMG_PATH) : ElettBruno(USATO, ID, NOME, PREZZO, SPI, IMG_PATH),
-					   portatile(PORTATILE)
+Computer::Computer(bool PORTATILE, bool USATO, std::string NOME, float COSTO, unsigned int SPI)
+  : Elettronica(USATO, NOME, COSTO, SPI), portatile(PORTATILE)
 {}
 
 bool Computer::isPortatile() const
@@ -127,19 +118,16 @@ bool Computer::isPortatile() const
 void Computer::setPortatile(bool is_portatile)
 {
   portatile = is_portatile;
-} 
+}
 
 float Computer::getPrezzo() const
 {
-  float res = getPrezzoListino();
-  
-  if(getSPI() >= 8)
-    res -= (getPrezzoListino() * 0.2f * (getSPI() - 9));
+  return getCosto() + getCosto() * (isUsato() ? 0.10f : 0.20f);
+}
 
-  if(isUsato())
-    res *= 2 / 3;
-
-  return res;
+unsigned int Computer::getSconto() const
+{
+  return getSPI() < 8 ? 0 : 5 * (getSPI() - 9);
 }
 
 Computer * Computer::clone() const
@@ -147,38 +135,47 @@ Computer * Computer::clone() const
   return new Computer(*this);
 }
 
-// Implementazione Smartphone
-Smartphone::Smartphone(bool EXT_WARRANTY, bool USATO,
-		       std::string ID, std::string NOME,
-		       float PREZZO, unsigned int SPI,
-		       std::string IMG_PATH) : ElettBruno(USATO, ID, NOME, PREZZO, SPI, IMG_PATH),
-					       extendedWarranty(EXT_WARRANTY)
-{}
-
-bool Smartphone::hasExtendedWarranty() const
+unsigned int Computer::getWarranty() const
 {
-  return extendedWarranty;
+  return isUsato() ? 0 : 2;
 }
 
-void Smartphone::setExtendedWarranty(bool has_exw)
+// Implementazione Smartphone
+Smartphone::Smartphone(bool IPHONE, bool USATO, std::string NOME, float COSTO, unsigned int SPI)
+  : Elettronica(USATO, NOME, COSTO, SPI), iPhone(IPHONE)
+{}
+
+bool Smartphone::isiPhone() const
 {
-  extendedWarranty = has_exw;
+  return iPhone;
+}
+
+void Smartphone::setiPhone(bool is_iPhone)
+{
+  iPhone = is_iPhone;
 } 
 
 float Smartphone::getPrezzo() const
 {
-  float res = getPrezzoListino();
-  
-  if(getSPI() >= 4)
-    res -= (getPrezzoListino() * 0.2f * (getSPI() - 3));
+  return getCosto() + getCosto() * (isUsato() ? 0.05f : 0.10f);
+}
 
-  if(isUsato())
-    res /= 2;
-
-  return res;
+unsigned int Smartphone::getSconto() const
+{
+  return getSPI() < 5 ? 0 : 10 * (getSPI() - 6);
 }
 
 Smartphone * Smartphone::clone() const
 {
   return new Smartphone(*this);
+}
+
+unsigned int Smartphone::getWarranty() const
+{
+  if (isUsato())
+    return 0;
+  else if (isiPhone())
+    return 1;
+  else
+    return 2;
 }

@@ -6,14 +6,12 @@
 class Articolo
 {
 private:
-  std::string id;
   std::string nome;
-  float prezzoListino;
+  float costo;
   unsigned int spi;
-  std::string imgPath;
   
 public:
-  Articolo(std::string, std::string, float, unsigned int = 0, std::string = "");
+  Articolo(std::string, float, unsigned int = 0);
   virtual ~Articolo() = default;
   
   std::string getId() const;
@@ -21,28 +19,65 @@ public:
   std::string getNome() const;
   void setNome(std::string);
   
-  float getPrezzoListino() const;
-  void setPrezzoListino(float);
+  float getCosto() const;
+  void setCosto(float);
 
   unsigned int getSPI() const;
   void setSPI(unsigned int);
 
-  std::string getImgPath() const;
-  void setImgPath(std::string);
-
   virtual float getPrezzo() const = 0;
+
+  virtual unsigned int getSconto() const = 0;
 
   virtual Articolo * clone() const = 0;
 };
 
-class Album : public Articolo
+class Media : public Articolo
+{
+private:
+  unsigned int anno;
+
+public:
+  Media(unsigned int, std::string, float, unsigned int = 0);
+
+  unsigned int getAnno() const;
+  void setAnno(unsigned int);
+
+  virtual float getPrezzo() const override = 0;
+
+  virtual unsigned int getSconto() const override = 0;
+
+  virtual Media * clone() const override = 0;
+};
+
+class Elettronica : public Articolo
+{
+private:
+  bool usato;
+
+public:
+  Elettronica(bool, std::string, float, unsigned int = 0);
+
+  bool isUsato() const;
+  void setUsato(bool);
+
+  virtual float getPrezzo() const override = 0;
+
+  virtual unsigned int getSconto() const override = 0;
+
+  virtual Elettronica * clone() const override = 0;
+
+  virtual unsigned int getWarranty() const = 0;
+};
+
+class CD : public Media
 {
 private:
   std::string artista;
   bool compilation;
-  
+
 public:
-  Album(std::string, bool, std::string, std::string, float, unsigned int = 0, std::string = "");
+  CD(std::string, bool, unsigned int, std::string, float, unsigned int = 0);
 
   std::string getArtista() const;
   void setArtista(std::string);
@@ -50,57 +85,52 @@ public:
   bool isCompilation() const;
   void setCompilation(bool);
 
-  virtual float getPrezzo() const;
+  virtual float getPrezzo() const override;
 
-  virtual Album * clone() const;
+  virtual unsigned int getSconto() const override;
+
+  virtual CD * clone() const override;
 };
 
-class ElettBruno : public Articolo
-{
-private:
-  bool usato;
 
-public:
-  ElettBruno(bool, std::string, std::string, float, unsigned int = 0, std::string = "");
-
-  bool isUsato() const;
-  void setUsato(bool);
-
-  virtual float getPrezzo() const = 0;
-
-  virtual ElettBruno * clone() const = 0;
-};
-
-class Computer : public ElettBruno
+class Computer : public Elettronica
 {
 private:
   bool portatile;
 
 public:
-  Computer(bool, bool, std::string, std::string, float, unsigned int = 0, std::string = "");
+  Computer(bool, bool, std::string, float, unsigned int = 0);
 
   bool isPortatile() const;
   void setPortatile(bool);
 
-  virtual float getPrezzo() const;
+  virtual float getPrezzo() const override;
 
-  virtual Computer * clone() const;
+  virtual unsigned int getSconto() const override;
+
+  virtual Computer * clone() const override;
+
+  virtual unsigned int getWarranty() const override;
 };
 
-class Smartphone : public ElettBruno
+class Smartphone : public Elettronica
 {
 private:
-  bool extendedWarranty;
+  bool iPhone;
 
 public:
-  Smartphone(bool, bool, std::string, std::string, float, unsigned int = 0, std::string = "");
+  Smartphone(bool, bool, std::string, float, unsigned int = 0);
 
-  bool hasExtendedWarranty() const;
-  void setExtendedWarranty(bool);
+  bool isiPhone() const;
+  void setiPhone(bool);
 
-  virtual float getPrezzo() const;
+  virtual float getPrezzo() const override;
 
-  virtual Smartphone * clone() const;
+  virtual unsigned int getSconto() const override;
+
+  virtual Smartphone * clone() const override;
+
+  virtual unsigned int getWarranty() const override;
 };
 
 #endif // GERARCHIA_HPP

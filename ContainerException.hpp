@@ -22,7 +22,7 @@ public:
   virtual const char * what() const noexcept; // overriding
 };
 
-class ContainerIteratorEmptyTableException : public ContainerException
+class ContainerEmptyTableException : public ContainerException
 {
 public:
   virtual const char * what() const noexcept; // overriding
