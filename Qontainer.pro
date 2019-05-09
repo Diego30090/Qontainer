@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        ModelException.cpp \
         main.cpp \
         Gerarchia.cpp \
         Controller.cpp \
@@ -43,6 +44,7 @@ HEADERS += \
         MainView.hpp \
         ContainerException.hpp \
         MainController.hpp \
+        ModelException.hpp \
         View.hpp
 
 FORMS +=
