@@ -7,42 +7,12 @@
 #include <QDomDocument>
 #include <QFile>
 #include <QString>
+#include "ModelException.hpp"
 #include "Gerarchia.hpp"
 #include "DeepPtr.hpp"
 #include "Container.hpp"
 
 class Controller;
-
-class ModelException : public std::exception
-{
-  virtual const char * what() const noexcept; // overriding
-};
-
-class ModelBoxNotOpenException : public ModelException
-{
-  virtual const char * what() const noexcept; // overriding
-};
-
-class ModelBoxNotClosedException : public ModelException
-{
-  virtual const char * what() const noexcept; // overriding
-};
-
-class ModelBoxPathNotSetException : public ModelException
-{
-  virtual const char * what() const noexcept; // overriding
-};
-
-class ModelFileNotAvailableException : public ModelException
-{
-  virtual const char * what() const noexcept; // overriding
-};
-
-class ModelBadTypeException : public ModelException
-{
-  virtual const char * what() const noexcept; // overriding
-};
-
 
 class Model : public QObject
 {
@@ -56,30 +26,36 @@ private:
 
 public:
   explicit Model(QObject *parent = nullptr);
+  ~Model();
 
   // Metodi per la gestione dei dati
   const DeepPtr<Articolo> getArticolo(QString) const;
 
   QList<QString> getAllArticolo() const;
   QList<QString> getArticoloByNome(QString) const;
-  QList<QString> getArticoloByPrezzoListino(float) const;
-  QList<QString> getArticoloBySPI(unsigned int) const;
+  QList<QString> getArticoloByCostoMax(float) const;
+  QList<QString> getArticoloByPrezzoMax(float, bool) const;
+  QList<QString> getArticoloBySPIMin(unsigned int) const;
 
-  QList<QString> getAllAlbum() const;
-  QList<QString> getAlbumByArtista(QString) const;
-  QList<QString> getAlbumIfCompilation(bool) const;
+  QList<QString> getAllMedia() const;
+  QList<QString> getMediaByAnno(unsigned int) const;
 
-  QList<QString> getAllElettBruno() const;
-  QList<QString> getElettBrunoIfUsato(bool) const;
+  QList<QString> getAllCD() const;
+  QList<QString> getCDByArtista(QString) const;
+  QList<QString> getCDIfCompilation(bool) const;
+
+  QList<QString> getAllElettronica() const;
+  QList<QString> getElettronicaIfUsato(bool) const;
+  QList<QString> getElettronicaByWarranty(bool) const;
 
   QList<QString> getAllComputer() const;
   QList<QString> getComputerIfPortatile(bool) const;
 
   QList<QString> getAllSmartphone() const;
-  QList<QString> getSmartphoneIfExtWarr(bool) const;
+  QList<QString> getSmartphoneIfiPhone(bool) const;
 
-  enum priceFilter { uguale, diverso, maggiore, minore, maggioreUguale, minoreUguale };
-  QList<QString> filterByPrice(QList<QString>, priceFilter, float);
+//  enum priceFilter { uguale, diverso, maggiore, minore, maggioreUguale, minoreUguale };
+//  QList<QString> filterByPrice(QList<QString>, priceFilter, float);
 
   // Metodi per la gestione dei box
   bool isOpen() const;
@@ -93,26 +69,25 @@ public:
 
 signals:
   void notify() const;
+  void err(QString) const;
 
 public slots:
   // Metodi per la gestione dei dati
-  void insert(const DeepPtr<Articolo> &);
+  void insert(QString, const DeepPtr<Articolo> &);
   void remove(QString);
   void remove(QList<QString>);
 
-  void setArticoloNome(QString, QString) const;
-  void setArticoloPrezzoListino(QString, float) const;
-  void setArticoloSPI(QString, unsigned int) const;
-//  void setArticoloImgPath(QString, QString) const;
+  void setArticolo(QString, QString, float, unsigned int) const;
 
-  void setAlbumArtista(QString, QString) const;
-  void setAlbumCompilation(QString, bool) const;
+  void setMedia(QString, unsigned int) const;
 
-  void setElettBrunoUsato(QString, bool) const;
+  void setCD(QString, QString, bool) const;
 
-  void setComputerPortatile(QString, bool) const;
+//  void setElettronica(QString, bool) const;
 
-  void setSmartphoneExtWarr(QString, bool) const;
+//  void setComputer(QString, bool) const;
+
+//  void setSmartphone(QString, bool) const;
 };
 
 #endif // MODEL_HPP

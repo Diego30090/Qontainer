@@ -14,8 +14,6 @@ public:
   Articolo(std::string, float, unsigned int = 0);
   virtual ~Articolo() = default;
   
-  std::string getId() const;
-
   std::string getNome() const;
   void setNome(std::string);
   

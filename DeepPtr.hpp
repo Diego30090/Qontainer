@@ -16,15 +16,22 @@ private:
   T *p;
 
 public:
-  DeepPtr();
   DeepPtr(T *);
+  DeepPtr(const T *);
   DeepPtr(const DeepPtr &);
+  DeepPtr(const T &);
   virtual ~DeepPtr();
   
   DeepPtr & operator=(const DeepPtr &);
-  T & operator*() const;
-  T * operator->() const;
-  T * operator&() const;
+
+  const T & operator*() const;
+  T & operator*();
+
+  const T * operator->() const;
+  T * operator->();
+
+  const T * operator&() const;
+  T * operator&();
 
   bool operator==(const DeepPtr &) const; // se punta allo stesso T
   bool operator!=(const DeepPtr &) const;
@@ -36,13 +43,16 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-DeepPtr<T>::DeepPtr() : p(nullptr) {}
-
-template <class T>
 DeepPtr<T>::DeepPtr(T *punt) : p(punt ? punt->clone() : nullptr) {}
 
 template <class T>
+DeepPtr<T>::DeepPtr(const T *punt) : DeepPtr(const_cast<T *>(punt)) {}
+
+template <class T>
 DeepPtr<T>::DeepPtr(const DeepPtr &dp) : p(dp.p ? dp.p->clone() : nullptr) {}
+
+template <class T>
+DeepPtr<T>::DeepPtr(const T &a) : p(a.clone()) {}
 
 template <class T>
 DeepPtr<T>::~DeepPtr()
@@ -63,19 +73,37 @@ DeepPtr<T> & DeepPtr<T>::operator=(const DeepPtr &dp)
 }
 
 template <class T>
-T & DeepPtr<T>::operator*() const
+const T & DeepPtr<T>::operator*() const
 {
   return *p;
 }
 
 template <class T>
-T * DeepPtr<T>::operator->() const
+T & DeepPtr<T>::operator*()
+{
+  return *p;
+}
+
+template <class T>
+const T * DeepPtr<T>::operator->() const
+{
+  return const_cast<const T * const>(p);
+}
+
+template <class T>
+T * DeepPtr<T>::operator->()
 {
   return p;
 }
 
 template <class T>
-T * DeepPtr<T>::operator&() const
+const T * DeepPtr<T>::operator&() const
+{
+  return const_cast<const T * const>(p);
+}
+
+template <class T>
+T * DeepPtr<T>::operator&()
 {
   return p;
 }
@@ -90,6 +118,6 @@ template <class T>
 bool DeepPtr<T>::operator!=(const DeepPtr &dp) const
 {
   return !operator==(dp);
-};
+}
 
 #endif // DEEPPTR_HPP

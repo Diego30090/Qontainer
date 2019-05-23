@@ -2,7 +2,7 @@
 *~
 .DS_Store
 build*
-*.pro.user
+*.pro.user*
 *.gch
 *.ui
 .#*

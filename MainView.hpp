@@ -38,10 +38,10 @@ signals:
   void toolBarActionTriggered(QAction *);
 
 private slots:
-  void addSideWindow(QWidget *);
+  //void addSideWindow(QWidget *);
 
 public slots:
-  void update(QList<QString>);
+  //void update(QList<QString>);
 };
 
 #endif // MAINVIEW_HPP

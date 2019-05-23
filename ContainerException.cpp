@@ -15,7 +15,7 @@ const char * ContainerDuplicateKeyException::what() const noexcept
   return "Inserimento di un valore chiave duplicato";
 }
 
-const char * ContainerIteratorEmptyTableException::what() const noexcept
+const char * ContainerEmptyTableException::what() const noexcept
 {
   return "Si è cercato di dichiarare un iteratore su un Container vuoto";
 }

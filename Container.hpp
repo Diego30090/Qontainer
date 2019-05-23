@@ -20,7 +20,7 @@ class Container
   friend class iterator<T, K>;
   
 private:
-  
+
   // Nodi nel bucket
   class node
   {
@@ -37,6 +37,7 @@ private:
   // Metodi per la gestione dei bucket
   static void destroy(node *&);
   static node * search(node *, const K &);
+  static node *& search_unsafe(node *&, const K &);
   static void insert(node *&, const K &, const T &);
   static void remove(node *&);
   static node * copy(node *);
@@ -72,18 +73,18 @@ public:
 
   class iterator
   {
-    friend class Container<T, K>;
+//    friend class Container<T, K>;
     
   private:
-    Container<T, K> const * const ref;
+    const Container<T, K> * const ref;
     node ** itArray;
-    unsigned int const itArrayLength;
+    const unsigned int itArrayLength;
     unsigned int itPos;
     bool end;
     
   public:
     iterator(Container<T, K> const *);
-    iterator(const iterator &);
+//    iterator(const iterator &);
     ~iterator();
     
     T & operator*();
@@ -93,8 +94,8 @@ public:
     bool isEnd();
     iterator & operator++();
     iterator operator++(int);
-    bool operator==(const iterator &);
-    bool operator!=(const iterator &);
+//    bool operator==(const iterator &);
+//    bool operator!=(const iterator &);
   };
 
   // Metodi per la gestione degli iteratori
@@ -133,19 +134,28 @@ typename Container<T, K>::node * Container<T, K>::search(node *n, const K &k)
 }
 
 template <class T, class K>
+typename Container<T, K>::node *& Container<T, K>::search_unsafe(node *&n, const K &k)
+{
+  if (!n) throw ContainerCellNotFoundException();
+
+  if (n->key == k)
+    return n;
+  else
+    return search_unsafe(n->next, k);
+}
+
+template <class T, class K>
 void Container<T, K>::insert(node *&n, const K &k, const T &obj)
 {
-  if (!n)
-    n = new node(k, obj);
-  else
+//  if (!n)
+//    n = new node(k, obj);
+//  else
     n = new node(k, obj, n);
 }
 
 template <class T, class K>
 void Container<T, K>::remove(node *&n)
 {
-  if (!n) return;
-
   node *tmp = n->next;
   delete n;
   n = tmp;
@@ -170,7 +180,7 @@ template <class T, class K>
 Container<T, K>::Container() : table(new node*[INIT_TABLE_LENGTH]),
 			       tableLength(INIT_TABLE_LENGTH),
 			       tableSize(0)
-{
+{  
   for (unsigned int i = 0; i < tableLength; ++i)
     table[i] = nullptr;
 }
@@ -187,7 +197,7 @@ Container<T, K>::Container(const Container &c) : table(new node*[c.tableLength])
 template <class T, class K>
 Container<T, K>::~Container()
 {
-  for (unsigned int i = 0; i < tableSize; ++i)
+  for (unsigned int i = 0; i < tableLength; ++i)
     destroy(table[i]);
 
   delete[] table;
@@ -207,8 +217,10 @@ bool Container<T, K>::empty() const
 
 template <class T, class K>
 T & Container<T, K>::get(const K &k) const
-// THROWS: ContainerCellNotFoundException
+// THROWS: ContainerEmptyTableException, ContainerCellNotFoundException
 {
+  if (tableSize == 0) throw ContainerEmptyTableException();
+
   node *tmp = search(table[getIndex(k)], k);
 
   if (!tmp) throw ContainerCellNotFoundException();
@@ -232,17 +244,14 @@ void Container<T, K>::remove(const K &k)
 {
   if (tableSize == 0) throw ContainerEmptyTableException();
 
-  node *tmp = search(table[getIndex(k)], k);
-
-  if (!tmp) throw ContainerCellNotFoundException();
+  remove(search_unsafe(table[getIndex(k)], k));
   
-  remove(tmp);
   tableSize--;
 }
 
 // IMPLEMENTAZIONE ITERATORI
 template <class T, class K>
-Container<T, K>::iterator::iterator(Container<T, K> const *c) :
+Container<T, K>::iterator::iterator(const Container<T, K> *c) :
   ref(c),
   itArray(new node*[c->tableSize]),
   itArrayLength(c->tableSize),
@@ -250,31 +259,34 @@ Container<T, K>::iterator::iterator(Container<T, K> const *c) :
   end(false)
 // THROWS: ContainerEmptyTableException
 {
-  if (c->empty()) throw ContainerEmptyTableException();
+  if (c->empty())
+    {
+      delete[] itArray;
+      itArray = nullptr;
+      end = true;
+      throw ContainerEmptyTableException();
+    }
   
-  int j = 0;
   for (unsigned int i = 0; i < c->tableLength; ++i)
     {
       node *tmp = c->table[i];
-      while (tmp)
-	{
-	  itArray[j++] = tmp;
-	  tmp = tmp->next;
-	}
+
+      for (unsigned int j = 0; tmp; tmp = tmp->next)
+        itArray[j++] = tmp;
     }
 }
 
-template <class T, class K>
-Container<T, K>::iterator::iterator(const Container<T, K>::iterator &it) :
-  ref(it.ref),
-  itArray(new node*[it.itArrayLength]),
-  itArrayLength(it.itArrayLength),
-  itPos(it.itPos),
-  end(it.end)
-{
-  for (unsigned int i = 0; i < itArrayLength; ++i)
-    itArray[i] = it.itArray[i];
-}
+//template <class T, class K>
+//Container<T, K>::iterator::iterator(const Container<T, K>::iterator &it) :
+//  ref(it.ref),
+//  itArray(new node*[it.itArrayLength]),
+//  itArrayLength(it.itArrayLength),
+//  itPos(it.itPos),
+//  end(it.end)
+//{
+//  for (unsigned int i = 0; i < itArrayLength; ++i)
+//    itArray[i] = it.itArray[i];
+//}
 
 template <class T, class K>
 Container<T, K>::iterator::~iterator()
@@ -323,17 +335,17 @@ typename Container<T, K>::iterator Container<T, K>::iterator::operator++(int)
   return tmp;
 }
 
-template <class T, class K>
-bool Container<T, K>::iterator::operator==(const Container<T, K>::iterator &i)
-{
-  return ref == i.ref && itPos == i.itPos;
-}
+//template <class T, class K>
+//bool Container<T, K>::iterator::operator==(const Container<T, K>::iterator &i)
+//{
+//  return ref == i.ref && itPos == i.itPos;
+//}
 
-template <class T, class K>
-bool Container<T, K>::iterator::operator!=(const Container<T, K>::iterator &i)
-{
-  return !operator==(i);
-}
+//template <class T, class K>
+//bool Container<T, K>::iterator::operator!=(const Container<T, K>::iterator &i)
+//{
+//  return !operator==(i);
+//}
 
 template <class T, class K>
 typename Container<T, K>::iterator Container<T, K>::begin() const
