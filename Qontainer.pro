@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,28 +24,44 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-SOURCES += \
-        ModelException.cpp \
-        main.cpp \
-        Gerarchia.cpp \
-        Controller.cpp \
-        Model.cpp \
-        MainView.cpp \
-        ContainerException.cpp \
-        MainController.cpp \
-        View.cpp
 
 HEADERS += \
-        Container.hpp \
-        DeepPtr.hpp \
-        Gerarchia.hpp \
-        Controller.hpp \
-        Model.hpp \
-        MainView.hpp \
-        ContainerException.hpp \
-        MainController.hpp \
-        ModelException.hpp \
-        View.hpp
+        \ # Model
+        $$PWD/Model/Container.hpp \
+        $$PWD/Model/ContainerException.hpp \
+        $$PWD/Model/DeepPtr.hpp \
+        $$PWD/Model/Gerarchia.hpp \
+        $$PWD/Model/Model.hpp \
+        $$PWD/Model/ModelException.hpp \
+        \ # Controller
+        $$PWD/Controller/Controller.hpp \
+        $$PWD/Controller/MainController.hpp \
+        \ # View
+        $$PWD/View/View.hpp \
+        $$PWD/View/MainView.hpp \
+        \ # YAML
+        $$PWD/yaml-cpp/*.h
+
+SOURCES += \
+        main.cpp \
+        \ # Model
+        $$PWD/Model/Gerarchia.cpp \
+        $$PWD/Model/Model.cpp \
+        $$PWD/Model/ModelException.cpp \
+        $$PWD/Model/ContainerException.cpp \
+        \ # Controller
+        $$PWD/Controller/Controller.cpp \
+        $$PWD/Controller/MainController.cpp \
+        \ # View
+        $$PWD/View/View.cpp \
+        $$PWD/View/MainView.cpp \
+        \ # YAML
+        $$PWD/yaml-cpp/*.cpp
+
+INCLUDEPATH += \
+        $$PWD/Model \
+        $$PWD/Controller \
+        $$PWD/View
 
 FORMS +=
 

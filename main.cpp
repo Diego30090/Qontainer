@@ -12,22 +12,23 @@ int main(int argc, char *argv[])
   auto m = new Model(&a);
   m->newBox();
 
-//  m->insert("skd", CD("Skid Row", false, 1987, "Skid Row", 10));
+  m->insert("skd", CD("Skid Row", false, 1987, "Skid Row", 10));
 
-//  auto l1 = m->getAllArticolo();
-//  qDebug() << l1;
+  auto l1 = m->getAllArticolo();
+  qDebug() << l1;
 
   m->insert("ipx", Smartphone(true, false, "iPhone X", 1000));
 
   auto l2 = m->getAllArticolo();
   qDebug() << l2;
 
-//  m->remove("ipx");
+  m->changeBoxPath("//Users//alechimetto//Desktop//db.yaml");
+  m->saveBox();
+  m->closeBox();
+  m->openBox();
 
-//  auto l3 = m->getAllArticolo();
-//  qDebug() << l3;
-
-  //auto prova = m->getArticolo("skd"); //Funziona
+  auto l3 = m->getAllArticolo();
+  qDebug() << l3;
 
   delete m;
 
