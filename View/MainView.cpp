@@ -1,65 +1,94 @@
 #include "MainView.hpp"
 
-MainController * MainView::makeController()
+MainController * MainView::makeController(Model *m)
 {
-  return new MainController(this, parent());
+  return new MainController(m, this, parent());
 }
 
 MainView::MainView(QWidget *parent) : View(parent), hl(new QHBoxLayout(this))
 {
-  this->resize(800, 500);
+  this->resize(500, 500);
 
   // Layout orizzontale
   hl->setContentsMargins(0, 0, 0, 0);
 
   // Barra degli strumenti
   QToolBar *upperToolBar = new QToolBar(QStringLiteral("BarraDegliStrumenti"), this);
+  QAction *tmp;
+
   upperToolBar->setMovable(false);
-  upperToolBar->addAction(QStringLiteral("Salva"));
-  upperToolBar->addAction(QStringLiteral("Salva con Nome"));
+
+  tmp = upperToolBar->addAction(QStringLiteral("Salva"));
+  tmp->setData(0);
+
+  tmp = upperToolBar->addAction(QStringLiteral("Salva con Nome"));
+  tmp->setData(1);
+
+  tmp = upperToolBar->addAction(QStringLiteral("Apri Box"));
+  tmp->setData(2);
+
   upperToolBar->addSeparator();
-  upperToolBar->addAction(QStringLiteral("Apri Box"));
-  upperToolBar->addAction(QStringLiteral("Chiudi Box"));
-  upperToolBar->addAction(QStringLiteral("Nuovo Box"));
-  upperToolBar->addSeparator();
-  upperToolBar->addAction(QStringLiteral("Ricerca"));
-  upperToolBar->addAction(QStringLiteral("Nuovo Articolo"));
-  upperToolBar->addAction(QStringLiteral("Elimina Articolo"));
-  connect(upperToolBar, SIGNAL(actionTriggered(QAction *)), this, SIGNAL(toolBarActionTriggered(QAction *)));
-  hl->setMenuBar(upperToolBar); // La metto come barra dei menù
+
+  tmp = upperToolBar->addAction(QStringLiteral("Ricerca"));
+  tmp->setData(3);
+
+  tmp = upperToolBar->addAction(QStringLiteral("Nuovo Articolo"));
+  tmp->setData(4);
+
+  tmp = upperToolBar->addAction(QStringLiteral("Elimina Articolo"));
+  tmp->setData(5);
+
+  connect(upperToolBar, SIGNAL(actionTriggered(QAction *)), this, SIGNAL(toolBarTriggered(QAction *)));
+
+  hl->setMenuBar(upperToolBar);
 
   // Tabella
-  QTableWidget *tab = new QTableWidget(this);
+  tab = new QTableWidget(0, 4, this);
+
+  QStringList labels;
+  labels << QStringLiteral("ID") << QStringLiteral("Nome") << QStringLiteral("SPI") << QStringLiteral("Prezzo");
+  tab->setHorizontalHeaderLabels(labels);
+  tab->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+  tab->verticalHeader()->setVisible(false);
+
+  tab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+  connect(tab, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(_tableTriggered(int)));
+
   hl->addWidget(tab);
 }
 
-void MainView::initialize()
+MainView::~MainView()
 {
-  setController(makeController());
-
-  ///////////////////////////////////////////// Vari connect
+  delete hl;
+  delete tab;
 }
 
+MainController * MainView::getController()
+{
+  return dynamic_cast<MainController *>(View::getController());
+}
 
+void MainView::_tableTriggered(int row/*, int col*/)
+{
+  emit tableTriggered(tab->item(row, 0)->text());
+}
 
-//void MainView::toolbarAction(QAction *a)
-//{
-//  auto opt = a->text();
+void MainView::updateTable(QList<QString> l)
+{
+  tab->clearContents();
+  tab->setRowCount(0);
 
-//  if (opt == "Salva")
-//    emit salva();
-//  else if (opt == "Salva con Nome")
-//    emit salvaConNome();
-//  else if (opt == "Apri Box")
-//    emit apriBox();
-//  else if (opt == "Chiudi Box")
-//    emit chiudiBox();
-//  else if (opt == "Nuovo Box")
-//    emit nuovoBox();
-//  else if (opt == "Ricerca")
-//    emit ricercaArticolo();
-//  else if (opt == "Nuovo Articolo")
-//    emit nuovoArticolo();
-//  else if (opt == "Elimina Articolo")
-//    emit eliminaArticolo();
-//}
+  for (auto it = l.begin(); it != l.end(); ++it)
+    {
+      const DeepPtr<Articolo> a = getController()->getArticolo(*it);
+
+      tab->setRowCount(tab->rowCount() + 1);
+
+      tab->setItem(tab->rowCount() - 1, 0, new QTableWidgetItem(*it, 0));
+      tab->setItem(tab->rowCount() - 1, 1, new QTableWidgetItem(QString::fromStdString(a->getNome()), 0));
+      tab->setItem(tab->rowCount() - 1, 2, new QTableWidgetItem(QString::number(a->getSPI()), 0));
+      tab->setItem(tab->rowCount() - 1, 3, new QTableWidgetItem(QString::number(static_cast<double>(a->getPrezzo()), 'f', 2), 0));
+    }
+}

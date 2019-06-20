@@ -36,13 +36,15 @@ HEADERS += \
         \ # Controller
         $$PWD/Controller/Controller.hpp \
         $$PWD/Controller/MainController.hpp \
+        $$PWD/Controller/CDController.hpp \
         \ # View
         $$PWD/View/View.hpp \
         $$PWD/View/MainView.hpp \
+        $$PWD/View/CDView.hpp \
         \ # YAML
         $$PWD/yaml-cpp/*.h
 
-SOURCES += \
+SOURCES += \        
         main.cpp \
         \ # Model
         $$PWD/Model/Gerarchia.cpp \
@@ -52,9 +54,11 @@ SOURCES += \
         \ # Controller
         $$PWD/Controller/Controller.cpp \
         $$PWD/Controller/MainController.cpp \
+        $$PWD/Controller/CDController.cpp \
         \ # View
         $$PWD/View/View.cpp \
         $$PWD/View/MainView.cpp \
+        $$PWD/View/CDView.cpp \
         \ # YAML
         $$PWD/yaml-cpp/*.cpp
 

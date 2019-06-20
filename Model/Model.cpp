@@ -4,12 +4,24 @@ Model::Model(QObject *parent) : QObject(parent), containerPath(QStringLiteral(""
 
 Model::~Model()
 {
-  closeBox();
+  if (box)
+    closeBox();
 }
 
 const DeepPtr<Articolo> Model::getArticolo(QString id) const
 {
-  return box->get(id.toStdString());
+  try
+  {
+    return box->get(id.toStdString());
+  }
+  catch (ContainerEmptyTableException)
+  {
+    throw ModelEmptyBoxException();
+  }
+  catch (ContainerCellNotFoundException)
+  {
+    throw ModelArticleNotFoundException();
+  }
 }
 
 QList<QString> Model::getAllArticolo() const
@@ -267,6 +279,11 @@ QList<QString> Model::getSmartphoneIfiPhone(bool ew) const
 bool Model::isOpen() const
 {
   return box;
+}
+
+bool Model::isEmpty() const
+{
+  return box->empty();
 }
 
 void Model::newBox()

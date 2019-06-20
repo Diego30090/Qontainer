@@ -28,6 +28,8 @@ public:
   ~Model();
 
   // Metodi per la gestione dei dati
+  bool exists(QString) const;
+
   const DeepPtr<Articolo> getArticolo(QString) const;
 
   QList<QString> getAllArticolo() const;
@@ -55,6 +57,7 @@ public:
 
   // Metodi per la gestione dei box
   bool isOpen() const;
+  bool isEmpty() const;
 
   void newBox();
   void openBox();

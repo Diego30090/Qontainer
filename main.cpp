@@ -1,36 +1,43 @@
 #include <QApplication>
-//#include "MainView.hpp"
-#include <QDebug>
+#include "MainView.hpp"
 #include "Model.hpp"
 
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
-//  MainView w;
-//  w.show();
 
-  auto m = new Model(&a);
-  m->newBox();
+  Model m(&a);
+  m.newBox();
 
-  m->insert("skd", CD("Skid Row", false, 1987, "Skid Row", 10));
+  MainView w;
+  View::initialize(&w, &m);
+  w.show();
 
-  auto l1 = m->getAllArticolo();
-  qDebug() << l1;
+  return a.exec();
 
-  m->insert("ipx", Smartphone(true, false, "iPhone X", 1000));
 
-  auto l2 = m->getAllArticolo();
-  qDebug() << l2;
+//  auto m = new Model(&a);
+//  m->newBox();
 
-  m->changeBoxPath("//Users//alechimetto//Desktop//db.yaml");
-  m->saveBox();
-  m->closeBox();
-  m->openBox();
+//  m->insert("skd", CD("Skid Row", false, 1987, "Skid Row", 10));
 
-  auto l3 = m->getAllArticolo();
-  qDebug() << l3;
+//  auto l1 = m->getAllArticolo();
+//  qDebug() << l1;
 
-  delete m;
+//  m->insert("ipx", Smartphone(true, false, "iPhone X", 1000));
+
+//  auto l2 = m->getAllArticolo();
+//  qDebug() << l2;
+
+//  m->changeBoxPath("//Users//alechimetto//Desktop//db.yaml");
+//  m->saveBox();
+//  m->closeBox();
+//  m->openBox();
+
+//  auto l3 = m->getAllArticolo();
+//  qDebug() << l3;
+
+//  delete m;
 
 //const Articolo * p = dynamic_cast<const CD *>(&m->getArticolo("skd")); //NON FUNZIONA
 
@@ -50,6 +57,4 @@ int main(int argc, char *argv[])
 
 //  qDebug() << QString().fromStdString(cd->getNome()) << cd->getCosto() << cd->getPrezzo() << cd->getSconto()
 //           << cd->isCompilation() << cd->getAnno();
-
-//  return a.exec();
 }

@@ -29,3 +29,18 @@ const char * ModelBadTypeException::what() const noexcept
 {
   return "Operazione non consentita su questo tipo di dato";
 }
+
+const char * ModelEmptyBoxException::what() const noexcept
+{
+  return "Si sta cercando di eseguire un'operazione a box vuoto";
+}
+
+const char * ModelDuplicateKeyException::what() const noexcept
+{
+  return "Si sta cercando di inserire un Articolo con chiave identica a quella un articolo già esistente";
+}
+
+const char * ModelArticleNotFoundException::what() const noexcept
+{
+  return "ID non trovato";
+}

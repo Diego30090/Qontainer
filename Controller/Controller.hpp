@@ -2,23 +2,25 @@
 #define CONTROLLER_HPP
 
 #include <QObject>
+#include "Model.hpp"
+#include "View.hpp"
 
 class Controller : public QObject
 {
   Q_OBJECT
 
-private:
-  QWidget *linkedView;
+protected:
+  Model *linkedModel;
+  View *linkedView;
 
 public:
-  explicit Controller(QWidget *view, QObject *parent = nullptr);
-  virtual ~Controller();
+  explicit Controller(Model *m, View *view, QObject *parent = nullptr);
+  virtual ~Controller() = default;
 
 signals:
 
 public slots:
   virtual void modelUpdate() = 0;
-
 };
 
 #endif // CONTROLLER_HPP

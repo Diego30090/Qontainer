@@ -6,6 +6,7 @@
 #include <QBoxLayout>
 #include <QPushButton>
 #include <QAction>
+#include <QHeaderView>
 #include "View.hpp"
 #include "MainController.hpp"
 
@@ -13,31 +14,27 @@ class MainView : public View
 {
   Q_OBJECT
 
-  friend MainController;
-
 private:
   QHBoxLayout *hl;
+  QTableWidget *tab;
 
-  virtual MainController * makeController() override;
+  virtual MainController * makeController(Model *m) override;
 
 public:
   explicit MainView(QWidget *parent = nullptr);
+  virtual ~MainView() override;
 
-  virtual void initialize() override;
+  MainController * getController() override;
 
 signals:
-//  void salva();
-//  void salvaConNome();
-//  void apriBox();
-//  void chiudiBox();
-//  void nuovoBox();
-//  void ricercaArticolo();
-//  void nuovoArticolo();
-//  void eliminaArticolo();
-  void toolBarActionTriggered(QAction *);
+  void toolBarTriggered(QAction *);
+  void tableTriggered(QString);
+
+private slots:
+  void _tableTriggered(int/*, int*/);
 
 public slots:
-  //void update(QList<QString>);
+  void updateTable(QList<QString>);
 };
 
 #endif // MAINVIEW_HPP

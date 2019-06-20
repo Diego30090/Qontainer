@@ -4,7 +4,8 @@ View::View(QWidget *parent) : QWidget(parent), linkedController(nullptr) {}
 
 View::~View()
 {
-  delete linkedController;
+  if (linkedController)
+    delete linkedController;
 }
 
 Controller * View::getController()
@@ -12,7 +13,7 @@ Controller * View::getController()
   return linkedController;
 }
 
-void View::setController(Controller *c)
+void View::initialize(View *v, Model *m)
 {
-  linkedController = c;
+  v->linkedController = v->makeController(m);
 }

@@ -1,8 +1,7 @@
 #include "Controller.hpp"
 
-Controller::Controller(QWidget *view, QObject *parent) : QObject(parent), linkedView(view)
+Controller::Controller(Model *m, View *view, QObject *parent)
+  : QObject(parent), linkedModel(m), linkedView(view)
 {
-  //connect()
+  connect(m, SIGNAL(notify()), this, SLOT(modelUpdate()));
 }
-
-Controller::~Controller() {}

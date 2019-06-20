@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-//class Model;
+class Model;
 class Controller;
 
 class View : public QWidget
@@ -13,16 +13,15 @@ class View : public QWidget
 private:
   Controller *linkedController;
 
-  virtual Controller * makeController() = 0;
+  virtual Controller * makeController(Model *m) = 0;
 
 public:
   explicit View(QWidget *parent = nullptr);
   virtual ~View();
 
-  Controller * getController();
-  void setController(Controller *);
+  virtual Controller * getController();
 
-  virtual void initialize() = 0;
+  static void initialize(View *v, Model *m);
 };
 
 #endif // VIEW_HPP
