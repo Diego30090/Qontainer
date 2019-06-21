@@ -35,6 +35,7 @@ void MainController::modelError(QString msg)
 void MainController::viewToolBarTriggered(QAction *a)
 {
   QString fileName = QStringLiteral("");
+  QDialog *diag;
 
   switch (a->data().toInt())
     {
@@ -71,6 +72,28 @@ void MainController::viewToolBarTriggered(QAction *a)
       break;
 
     case 4:
+      diag = new QDialog(linkedView);
+      diag->setModal(true);
+
+      auto vl = new QVBoxLayout(diag);
+
+      auto cdButton = new QPushButton(QStringLiteral("CD"));
+      vl->addWidget(cdButton);
+      connect(cdButton, SIGNAL(clicked()), this, SLOT(insertCD()));
+      connect(cdButton, SIGNAL(clicked()), diag, SLOT(close()));
+
+      auto computerButton = new QPushButton(QStringLiteral("Computer"));
+      vl->addWidget(computerButton);
+      connect(computerButton, SIGNAL(clicked()), this, SLOT(insertComputer()));
+      connect(computerButton, SIGNAL(clicked()), diag, SLOT(close()));
+
+      auto smartphoneButton = new QPushButton(QStringLiteral("Smartphone"));
+      vl->addWidget(smartphoneButton);
+      connect(smartphoneButton, SIGNAL(clicked()), this, SLOT(insertSmartphone()));
+      connect(smartphoneButton, SIGNAL(clicked()), diag, SLOT(close()));
+
+      diag->exec();
+
       break;
     }
 }
@@ -91,6 +114,35 @@ void MainController::viewTableTriggered(QString id)
     }
   else if (auto e = dynamic_cast<const Elettronica *>(&a))
     {
+      if (auto c = dynamic_cast<const Computer *>(&a))
+        {
+          auto v = new ComputerView(linkedView);
+          View::initialize(v, linkedModel);
+          v->getController()->setID(id);
+          v->show();
+        }
+      else if (auto s = dynamic_cast<const Smartphone *>(&a))
+        {
 
+        }
     }
+}
+
+void MainController::insertCD()
+{
+  auto v = new CDView(linkedView);
+  View::initialize(v, linkedModel);
+  v->show();
+}
+
+void MainController::insertComputer()
+{
+  auto v = new ComputerView(linkedView);
+  View::initialize(v, linkedModel);
+  v->show();
+}
+
+void MainController::insertSmartphone()
+{
+
 }

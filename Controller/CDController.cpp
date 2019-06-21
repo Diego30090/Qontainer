@@ -32,6 +32,11 @@ void CDController::modelUpdate()
       {
         linkedModel->getArticolo(id);
       }
+      catch (ModelEmptyBoxException)
+      {
+        linkedView->close();
+        return;
+      }
       catch (ModelArticleNotFoundException)
       {
         linkedView->close();
@@ -45,9 +50,16 @@ void CDController::modelUpdate()
 void CDController::viewApplicaModifica(QString ID, QString NOME, QString SPI, QString COSTO,
                                        QString ANNO, QString ARTISTA, bool COMPILATION)
 {
+  id = ID;
+
   try
   {
     linkedModel->getArticolo(ID);
+  }
+  catch (ModelEmptyBoxException)
+  {
+    linkedModel->insert(ID, CD(ARTISTA.toStdString(), COMPILATION, ANNO.toUInt(), NOME.toStdString(), COSTO.toFloat(), SPI.toUInt()));
+    return;
   }
   catch (ModelArticleNotFoundException)
   {
@@ -55,7 +67,6 @@ void CDController::viewApplicaModifica(QString ID, QString NOME, QString SPI, QS
     return;
   }
 
-  id = ID;
   linkedModel->setArticolo(ID, NOME, COSTO.toFloat(), SPI.toUInt());
   linkedModel->setMedia(ID, ANNO.toUInt());
   linkedModel->setCD(ID, ARTISTA, COMPILATION);

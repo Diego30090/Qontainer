@@ -24,7 +24,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-
 HEADERS += \
         \ # Model
         $$PWD/Model/Container.hpp \
@@ -37,14 +36,16 @@ HEADERS += \
         $$PWD/Controller/Controller.hpp \
         $$PWD/Controller/MainController.hpp \
         $$PWD/Controller/CDController.hpp \
+        $$PWD/Controller/ComputerController.hpp \
         \ # View
         $$PWD/View/View.hpp \
         $$PWD/View/MainView.hpp \
         $$PWD/View/CDView.hpp \
+        $$PWD/View/ComputerView.hpp \
         \ # YAML
         $$PWD/yaml-cpp/*.h
 
-SOURCES += \        
+SOURCES += \
         main.cpp \
         \ # Model
         $$PWD/Model/Gerarchia.cpp \
@@ -55,10 +56,12 @@ SOURCES += \
         $$PWD/Controller/Controller.cpp \
         $$PWD/Controller/MainController.cpp \
         $$PWD/Controller/CDController.cpp \
+        $$PWD/Controller/ComputerController.cpp \
         \ # View
         $$PWD/View/View.cpp \
         $$PWD/View/MainView.cpp \
         $$PWD/View/CDView.cpp \
+        $$PWD/View/ComputerView.cpp \
         \ # YAML
         $$PWD/yaml-cpp/*.cpp
 

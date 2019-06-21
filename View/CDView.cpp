@@ -17,6 +17,7 @@ CDView::CDView(QWidget *parent) : View(parent), fl(new QFormLayout(this))
 
   spi = new QLineEdit(this);
   fl->addRow(QStringLiteral("SPI"), spi);
+  spi->setText(QString::number(0));
 
   costo = new QLineEdit(this);
   fl->addRow(QStringLiteral("Costo"), costo);

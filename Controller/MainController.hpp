@@ -6,7 +6,7 @@
 #include <QFileDialog>
 #include "Controller.hpp"
 #include "CDView.hpp"
-#include "CDController.hpp"
+#include "ComputerView.hpp"
 
 class MainController : public Controller
 {
@@ -27,6 +27,10 @@ public slots:
 
   void viewToolBarTriggered(QAction *);
   void viewTableTriggered(QString);
+
+  void insertCD();
+  void insertComputer();
+  void insertSmartphone();
 };
 
 #endif // MAINCONTROLLER_HPP
