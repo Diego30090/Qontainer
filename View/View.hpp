@@ -17,7 +17,6 @@ private:
 
 public:
   explicit View(QWidget *parent = nullptr);
-  virtual ~View();
 
   virtual Controller * getController();
 

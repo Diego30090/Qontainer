@@ -12,8 +12,7 @@ private:
   QString id;
 
 public:
-  CDController(Model *m, View *view, QObject *parent = nullptr);
-  virtual ~CDController() override = default;
+  CDController(Model *m, View *view);
 
   const DeepPtr<CD> getArticolo(QString);
 
@@ -26,8 +25,7 @@ public slots:
   virtual void modelUpdate() override;
 
   void viewApplicaModifica(QString, QString, QString, QString, QString, QString, bool);
-
-
+  void viewEliminaArticolo();
 };
 
 #endif // CDCONTROLLER_HPP

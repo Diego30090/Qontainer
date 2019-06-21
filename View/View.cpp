@@ -1,11 +1,8 @@
 #include "View.hpp"
 
-View::View(QWidget *parent) : QWidget(parent), linkedController(nullptr) {}
-
-View::~View()
+View::View(QWidget *parent) : QWidget(parent), linkedController(nullptr)
 {
-  if (linkedController)
-    delete linkedController;
+  setWindowFlags(Qt::Window);
 }
 
 Controller * View::getController()

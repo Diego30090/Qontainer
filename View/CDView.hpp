@@ -24,17 +24,19 @@ private:
   QCheckBox *compilation;
   QLabel *prezzo;
   QLabel *sconto;
+  QPushButton *modifica;
+  QPushButton *elimina;
 
   virtual CDController * makeController(Model *m) override;
 
 public:
   explicit CDView(QWidget *parent);
-  virtual ~CDView() override;
 
   virtual CDController * getController() override;
 
 signals:
   void applicaModifica(QString, QString, QString, QString, QString, QString, bool);
+  void eliminaArticolo();
 
 private slots:
   void _clickModifica();

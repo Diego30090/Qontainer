@@ -22,7 +22,6 @@ private:
 
 public:
   explicit MainView(QWidget *parent = nullptr);
-  virtual ~MainView() override;
 
   MainController * getController() override;
 
@@ -31,10 +30,12 @@ signals:
   void tableTriggered(QString);
 
 private slots:
-  void _tableTriggered(int/*, int*/);
+  void _tableTriggered(int);
 
 public slots:
   void updateTable(QList<QString>);
 };
+
+
 
 #endif // MAINVIEW_HPP

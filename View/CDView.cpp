@@ -1,12 +1,14 @@
 #include "CDView.hpp"
 
-CDController * CDView::getController()
+CDController * CDView::makeController(Model *m)
 {
-  return dynamic_cast<CDController *>(View::getController());
+  return new CDController(m, this);
 }
 
 CDView::CDView(QWidget *parent) : View(parent), fl(new QFormLayout(this))
 {
+  setFixedSize(250, 350);
+
   id = new QLineEdit(this);
   fl->addRow(QStringLiteral("ID"), id);
 
@@ -34,28 +36,19 @@ CDView::CDView(QWidget *parent) : View(parent), fl(new QFormLayout(this))
   sconto = new QLabel(this);
   fl->addRow(QStringLiteral("Sconto"), sconto);
 
-  auto b = new QPushButton(QStringLiteral("Applica Mod."));
-  fl->addWidget(b);
-  connect(b, SIGNAL(clicked()), this, SLOT(_clickModifica()));
+  modifica = new QPushButton(QStringLiteral("Inserisci"));
+  fl->addWidget(modifica);
+  connect(modifica, SIGNAL(clicked()), this, SLOT(_clickModifica()));
+
+  elimina = new QPushButton(QStringLiteral("Elimina"));
+  fl->addWidget(elimina);
+  connect(elimina, SIGNAL(clicked()), this, SIGNAL(eliminaArticolo()));
+  elimina->setVisible(false);
 }
 
-CDView::~CDView()
+CDController * CDView::getController()
 {
-  delete id;
-  delete nome;
-  delete spi;
-  delete prezzo;
-  delete anno;
-  delete artista;
-  delete compilation;
-  delete prezzo;
-  delete sconto;
-  delete fl;
-}
-
-CDController * CDView::makeController(Model *m)
-{
-  return new CDController(m, this, parent());
+  return dynamic_cast<CDController *>(View::getController());
 }
 
 void CDView::_clickModifica()
@@ -77,4 +70,7 @@ void CDView::updateFields(QString ID)
   compilation->setChecked(cd->isCompilation());
   prezzo->setText(QString::number(static_cast<double>(cd->getPrezzo())));
   sconto->setText(QString::number(cd->getSconto()) + QStringLiteral("%"));
+
+  modifica->setText(QStringLiteral("Applica Mod."));
+  elimina->setVisible(true);
 }

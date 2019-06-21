@@ -1,19 +1,14 @@
 #include "MainController.hpp"
 
-MainController::MainController(Model *m, View *view, QObject *parent)
-  : Controller(m, view, parent)
+MainController::MainController(Model *m, View *view)
+  : Controller(m, view)
 {
-  connect(this, SIGNAL(viewTableUpdate(QList<QString>)), linkedView, SLOT(updateTable(QList<QString>)));
-
   connect(m, SIGNAL(err(QString)), this, SLOT(modelError(QString)));
+
+  connect(this, SIGNAL(viewTableUpdate(QList<QString>)), linkedView, SLOT(updateTable(QList<QString>)));
 
   connect(linkedView, SIGNAL(toolBarTriggered(QAction *)), this, SLOT(viewToolBarTriggered(QAction *)));
   connect(linkedView, SIGNAL(tableTriggered(QString)), this, SLOT(viewTableTriggered(QString)));
-}
-
-MainController::~MainController()
-{
-  delete linkedModel;
 }
 
 const DeepPtr<Articolo> MainController::getArticolo(QString id)
@@ -39,11 +34,30 @@ void MainController::modelError(QString msg)
 
 void MainController::viewToolBarTriggered(QAction *a)
 {
+  QString fileName = QStringLiteral("");
+
   switch (a->data().toInt())
     {
+    case 0:
+      if (!linkedModel->getBoxPath().isEmpty())
+        {
+          linkedModel->saveBox();
+          break;
+        }
+      [[clang::fallthrough]];
+
+    case 1:
+      fileName = QFileDialog::getSaveFileName(linkedView, QStringLiteral("Salva"), linkedModel->getBoxPath(), QStringLiteral("YAML Files (*.yaml *.yml)"));
+
+      if (!fileName.isEmpty())
+        {
+          linkedModel->changeBoxPath(fileName);
+          linkedModel->saveBox();
+        }
+      break;
+
     case 2:
-      QString fileName = QStringLiteral("");
-      fileName = QFileDialog::getOpenFileName(linkedView, QStringLiteral("Apri")/*, QStringLiteral("YAML Files (*.yaml, *.yml)")*/);
+      fileName = QFileDialog::getOpenFileName(linkedView, QStringLiteral("Apri"), QStringLiteral(""), QStringLiteral("YAML Files (*.yaml *.yml)"));
 
       if (!fileName.isEmpty())
         {
@@ -52,10 +66,31 @@ void MainController::viewToolBarTriggered(QAction *a)
           linkedModel->openBox();
         }
       break;
+
+    case 3:
+      break;
+
+    case 4:
+      break;
     }
 }
 
 void MainController::viewTableTriggered(QString id)
 {
+  auto a = linkedModel->getArticolo(id);
 
+  if (auto m = dynamic_cast<const Media *>(&a))
+    {
+      if (auto cd = dynamic_cast<const CD *>(&a))
+        {
+          auto v = new CDView(linkedView);
+          View::initialize(v, linkedModel);
+          v->getController()->setID(id);
+          v->show();
+        }
+    }
+  else if (auto e = dynamic_cast<const Elettronica *>(&a))
+    {
+
+    }
 }

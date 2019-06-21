@@ -14,7 +14,7 @@ protected:
   View *linkedView;
 
 public:
-  explicit Controller(Model *m, View *view, QObject *parent = nullptr);
+  explicit Controller(Model *m, View *view);
   virtual ~Controller() = default;
 
 signals:

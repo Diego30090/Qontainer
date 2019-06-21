@@ -2,7 +2,7 @@
 
 MainController * MainView::makeController(Model *m)
 {
-  return new MainController(m, this, parent());
+  return new MainController(m, this);
 }
 
 MainView::MainView(QWidget *parent) : View(parent), hl(new QHBoxLayout(this))
@@ -24,7 +24,7 @@ MainView::MainView(QWidget *parent) : View(parent), hl(new QHBoxLayout(this))
   tmp = upperToolBar->addAction(QStringLiteral("Salva con Nome"));
   tmp->setData(1);
 
-  tmp = upperToolBar->addAction(QStringLiteral("Apri Box"));
+  tmp = upperToolBar->addAction(QStringLiteral("Apri"));
   tmp->setData(2);
 
   upperToolBar->addSeparator();
@@ -34,9 +34,6 @@ MainView::MainView(QWidget *parent) : View(parent), hl(new QHBoxLayout(this))
 
   tmp = upperToolBar->addAction(QStringLiteral("Nuovo Articolo"));
   tmp->setData(4);
-
-  tmp = upperToolBar->addAction(QStringLiteral("Elimina Articolo"));
-  tmp->setData(5);
 
   connect(upperToolBar, SIGNAL(actionTriggered(QAction *)), this, SIGNAL(toolBarTriggered(QAction *)));
 
@@ -49,20 +46,14 @@ MainView::MainView(QWidget *parent) : View(parent), hl(new QHBoxLayout(this))
   labels << QStringLiteral("ID") << QStringLiteral("Nome") << QStringLiteral("SPI") << QStringLiteral("Prezzo");
   tab->setHorizontalHeaderLabels(labels);
   tab->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
   tab->verticalHeader()->setVisible(false);
-
   tab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  tab->setSelectionBehavior(QAbstractItemView::SelectItems);
+  tab->setSelectionMode(QAbstractItemView::SingleSelection);
 
   connect(tab, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(_tableTriggered(int)));
 
   hl->addWidget(tab);
-}
-
-MainView::~MainView()
-{
-  delete hl;
-  delete tab;
 }
 
 MainController * MainView::getController()

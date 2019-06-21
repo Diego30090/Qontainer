@@ -5,14 +5,15 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include "Controller.hpp"
+#include "CDView.hpp"
+#include "CDController.hpp"
 
 class MainController : public Controller
 {
   Q_OBJECT
 
 public:
-  explicit MainController(Model *m, View *view, QObject *parent = nullptr);
-  virtual ~MainController() override;
+  explicit MainController(Model *m, View *view);
 
   const DeepPtr<Articolo> getArticolo(QString);
 

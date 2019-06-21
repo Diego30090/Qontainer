@@ -1,7 +1,7 @@
 #include "CDController.hpp"
 
-CDController::CDController(Model *m, View *view, QObject *parent)
-  : Controller(m, view, parent), id(QStringLiteral(""))
+CDController::CDController(Model *m, View *view)
+  : Controller(m, view), id(QStringLiteral(""))
 {
   connect(this, SIGNAL(viewUpdateFields(QString)), linkedView, SLOT(updateFields(QString)));
 
@@ -9,6 +9,8 @@ CDController::CDController(Model *m, View *view, QObject *parent)
 
   connect(linkedView, SIGNAL(applicaModifica(QString, QString, QString, QString, QString, QString, bool)),
           this, SLOT(viewApplicaModifica(QString, QString, QString, QString, QString, QString, bool)));
+
+  connect(linkedView, SIGNAL(eliminaArticolo()), this, SLOT(viewEliminaArticolo()));
 }
 
 const DeepPtr<CD> CDController::getArticolo(QString ID)
@@ -25,7 +27,19 @@ void CDController::setID(QString ID)
 void CDController::modelUpdate()
 {
   if (!id.isEmpty())
-    emit viewUpdateFields(id);
+    {
+      try
+      {
+        linkedModel->getArticolo(id);
+      }
+      catch (ModelArticleNotFoundException)
+      {
+        linkedView->close();
+        return;
+      }
+
+      emit viewUpdateFields(id);
+    }
 }
 
 void CDController::viewApplicaModifica(QString ID, QString NOME, QString SPI, QString COSTO,
@@ -41,7 +55,13 @@ void CDController::viewApplicaModifica(QString ID, QString NOME, QString SPI, QS
     return;
   }
 
-  linkedModel->setArticolo(ID, NOME, SPI.toFloat(), COSTO.toUInt());
+  id = ID;
+  linkedModel->setArticolo(ID, NOME, COSTO.toFloat(), SPI.toUInt());
   linkedModel->setMedia(ID, ANNO.toUInt());
   linkedModel->setCD(ID, ARTISTA, COMPILATION);
+}
+
+void CDController::viewEliminaArticolo()
+{
+  linkedModel->remove(id);
 }

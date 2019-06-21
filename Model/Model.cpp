@@ -439,6 +439,11 @@ void Model::saveBox() const
   delete f;
 }
 
+QString Model::getBoxPath()
+{
+  return containerPath;
+}
+
 void Model::changeBoxPath(QString path)
 {
   containerPath = path;
@@ -507,6 +512,8 @@ void Model::setArticolo(QString k, QString nome, float costo, unsigned int spi) 
   a->setNome(nome.toStdString());
   a->setCosto(costo);
   a->setSPI(spi);
+
+  emit notify();
 }
 
 void Model::setMedia(QString k, unsigned int anno) const
@@ -526,6 +533,8 @@ void Model::setMedia(QString k, unsigned int anno) const
   }
 
   m->setAnno(anno);
+
+  emit notify();
 }
 
 void Model::setCD(QString k, QString artista, bool comp) const
@@ -546,6 +555,8 @@ void Model::setCD(QString k, QString artista, bool comp) const
 
   cd->setArtista(artista.toStdString());
   cd->setCompilation(comp);
+
+  emit notify();
 }
 
 void Model::setElettronica(QString k, bool us) const
@@ -565,6 +576,8 @@ void Model::setElettronica(QString k, bool us) const
   }
 
   el->setUsato(us);
+
+  emit notify();
 }
 
 void Model::setComputer(QString k, bool p) const
@@ -584,6 +597,8 @@ void Model::setComputer(QString k, bool p) const
   }
 
   c->setPortatile(p);
+
+  emit notify();
 }
 
 void Model::setSmartphone(QString k, bool ip) const
@@ -603,4 +618,6 @@ void Model::setSmartphone(QString k, bool ip) const
   }
 
   s->setiPhone(ip);
+
+  emit notify();
 }

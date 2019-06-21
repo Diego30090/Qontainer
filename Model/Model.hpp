@@ -64,6 +64,7 @@ public:
   void closeBox();
   void saveBox() const;
 
+  QString getBoxPath();
   void changeBoxPath(QString);
 
 signals:
