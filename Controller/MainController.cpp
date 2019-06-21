@@ -102,9 +102,9 @@ void MainController::viewTableTriggered(QString id)
 {
   auto a = linkedModel->getArticolo(id);
 
-  if (auto m = dynamic_cast<const Media *>(&a))
+  if (dynamic_cast<const Media *>(&a))
     {
-      if (auto cd = dynamic_cast<const CD *>(&a))
+      if (dynamic_cast<const CD *>(&a))
         {
           auto v = new CDView(linkedView);
           View::initialize(v, linkedModel);
@@ -112,18 +112,21 @@ void MainController::viewTableTriggered(QString id)
           v->show();
         }
     }
-  else if (auto e = dynamic_cast<const Elettronica *>(&a))
+  else if (dynamic_cast<const Elettronica *>(&a))
     {
-      if (auto c = dynamic_cast<const Computer *>(&a))
+      if (dynamic_cast<const Computer *>(&a))
         {
           auto v = new ComputerView(linkedView);
           View::initialize(v, linkedModel);
           v->getController()->setID(id);
           v->show();
         }
-      else if (auto s = dynamic_cast<const Smartphone *>(&a))
+      else if (dynamic_cast<const Smartphone *>(&a))
         {
-
+          auto v = new SmartphoneView(linkedView);
+          View::initialize(v, linkedModel);
+          v->getController()->setID(id);
+          v->show();
         }
     }
 }
@@ -144,5 +147,7 @@ void MainController::insertComputer()
 
 void MainController::insertSmartphone()
 {
-
+  auto v = new SmartphoneView(linkedView);
+  View::initialize(v, linkedModel);
+  v->show();
 }

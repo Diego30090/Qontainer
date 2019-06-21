@@ -37,11 +37,13 @@ HEADERS += \
         $$PWD/Controller/MainController.hpp \
         $$PWD/Controller/CDController.hpp \
         $$PWD/Controller/ComputerController.hpp \
+        $$PWD/Controller/SmartphoneController.hpp \
         \ # View
         $$PWD/View/View.hpp \
         $$PWD/View/MainView.hpp \
         $$PWD/View/CDView.hpp \
         $$PWD/View/ComputerView.hpp \
+        $$PWD/View/SmartphoneView.hpp \
         \ # YAML
         $$PWD/yaml-cpp/*.h
 
@@ -57,11 +59,13 @@ SOURCES += \
         $$PWD/Controller/MainController.cpp \
         $$PWD/Controller/CDController.cpp \
         $$PWD/Controller/ComputerController.cpp \
+        $$PWD/Controller/SmartphoneController.cpp \
         \ # View
         $$PWD/View/View.cpp \
         $$PWD/View/MainView.cpp \
         $$PWD/View/CDView.cpp \
         $$PWD/View/ComputerView.cpp \
+        $$PWD/View/SmartphoneView.cpp \
         \ # YAML
         $$PWD/yaml-cpp/*.cpp
 

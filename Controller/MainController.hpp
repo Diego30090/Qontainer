@@ -7,6 +7,7 @@
 #include "Controller.hpp"
 #include "CDView.hpp"
 #include "ComputerView.hpp"
+#include "SmartphoneView.hpp"
 
 class MainController : public Controller
 {
