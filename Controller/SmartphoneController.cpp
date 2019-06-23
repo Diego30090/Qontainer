@@ -69,7 +69,7 @@ void SmartphoneController::viewApplicaModifica(QString ID, QString NOME, QString
 
   linkedModel->setArticolo(ID, NOME, COSTO.toFloat(), SPI.toUInt());
   linkedModel->setElettronica(ID, USATO);
-  linkedModel->setComputer(ID, IPHONE);
+  linkedModel->setSmartphone(ID, IPHONE);
 }
 
 void SmartphoneController::viewEliminaArticolo()

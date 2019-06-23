@@ -64,22 +64,15 @@ QList<QString> Model::getArticoloByCostoMax(float cm) const
   return res;
 }
 
-QList<QString> Model::getArticoloByPrezzoMax(float pm, bool sconto) const
+QList<QString> Model::getArticoloByPrezzoMax(float pm) const
 {
   if (!box) throw ModelBoxNotOpenException();
 
   QList<QString> res;
 
   for (auto it = box->begin(); !it.isEnd(); ++it)
-    {
-      float prezzoArticolo = (*it)->getPrezzo();
-
-      if (sconto)
-        prezzoArticolo = prezzoArticolo - prezzoArticolo * (*it)->getSconto() / 100;
-
-      if (prezzoArticolo <= pm)
-        res.push_back(QString::fromStdString(it.getKey()));
-    }
+    if ((*it)->getPrezzo() <= pm)
+      res.push_back(QString::fromStdString(it.getKey()));
 
   return res;
 }
@@ -291,7 +284,6 @@ void Model::newBox()
   if (box) throw ModelBoxNotClosedException();
 
   box = new Container<DeepPtr<Articolo>, std::string>;
-  emit notify();
 }
 
 void Model::openBox()
@@ -338,7 +330,7 @@ void Model::openBox()
             {
               auto iphone = s["iphone"].as<bool>();
 
-              box->put(id, Computer(iphone, usato, nome, costo, spi));
+              box->put(id, Smartphone(iphone, usato, nome, costo, spi));
             }
         }
     }
@@ -353,8 +345,6 @@ void Model::closeBox()
 
   delete box;
   box = nullptr;
-
-  emit notify();
 }
 
 void Model::saveBox() const

@@ -7,7 +7,7 @@ MainController * MainView::makeController(Model *m)
 
 MainView::MainView(QWidget *parent) : View(parent), hl(new QHBoxLayout(this))
 {
-  this->resize(500, 500);
+  resize(500, 500);
 
   // Layout orizzontale
   hl->setContentsMargins(0, 0, 0, 0);

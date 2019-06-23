@@ -15,9 +15,6 @@ protected:
 
 public:
   explicit Controller(Model *m, View *view);
-  virtual ~Controller() = default;
-
-signals:
 
 public slots:
   virtual void modelUpdate() = 0;

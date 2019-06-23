@@ -71,6 +71,8 @@ public:
 
   void remove(const K &);
 
+  Container<T, K> & operator=(const Container<T, K> &);
+
   class iterator
   {
 //    friend class Container<T, K>;
@@ -248,6 +250,19 @@ void Container<T, K>::remove(const K &k)
   
   tableSize--;
 }
+
+ template <class T, class K>
+ Container<T, K> & Container<T, K>::operator=(const Container<T, K> &c)
+ {
+   if (table == c.table)
+     return *this;
+
+   for (unsigned int i = 0; i < tableLength; ++i)
+     destroy(table[i]);
+
+   for (unsigned int i = 0; i < tableSize; ++i)
+     table[i] = copy(c.table[i]);
+ }
 
 // IMPLEMENTAZIONE ITERATORI
 template <class T, class K>

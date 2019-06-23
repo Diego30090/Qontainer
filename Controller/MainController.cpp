@@ -69,6 +69,13 @@ void MainController::viewToolBarTriggered(QAction *a)
       break;
 
     case 3:
+      if (!(rw && rw->isVisible()))
+        {
+          rw = new SearchView(linkedView);
+          View::initialize(rw, linkedModel);
+          connect(rw->getController(), SIGNAL(searchResult(QList<QString>)), this, SIGNAL(viewTableUpdate(QList<QString>)));
+          rw->show();
+        }
       break;
 
     case 4:

@@ -35,7 +35,7 @@ public:
   QList<QString> getAllArticolo() const;
   QList<QString> getArticoloByNome(QString) const;
   QList<QString> getArticoloByCostoMax(float) const;
-  QList<QString> getArticoloByPrezzoMax(float, bool) const;
+  QList<QString> getArticoloByPrezzoMax(float) const;
   QList<QString> getArticoloBySPIMin(unsigned int) const;
 
   QList<QString> getAllMedia() const;

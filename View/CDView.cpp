@@ -9,32 +9,32 @@ CDView::CDView(QWidget *parent) : View(parent), fl(new QFormLayout(this))
 {
   setFixedSize(250, 350);
 
-  id = new QLineEdit(this);
+  id = new QLineEdit();
   fl->addRow(QStringLiteral("ID"), id);
 
-  nome = new QLineEdit(this);
+  nome = new QLineEdit();
   fl->addRow(QStringLiteral("Nome"), nome);
 
-  spi = new QLineEdit(this);
+  spi = new QLineEdit();
   fl->addRow(QStringLiteral("SPI"), spi);
   spi->setText(QString::number(0));
 
-  costo = new QLineEdit(this);
+  costo = new QLineEdit();
   fl->addRow(QStringLiteral("Costo"), costo);
 
-  anno = new QLineEdit(this);
+  anno = new QLineEdit();
   fl->addRow(QStringLiteral("Anno"), anno);
 
-  artista = new QLineEdit(this);
+  artista = new QLineEdit();
   fl->addRow(QStringLiteral("Artista"), artista);
 
-  compilation = new QCheckBox(this);
+  compilation = new QCheckBox();
   fl->addRow(QStringLiteral("Compilation"), compilation);
 
-  prezzo = new QLabel(this);
+  prezzo = new QLabel();
   fl->addRow(QStringLiteral("Prezzo"), prezzo);
 
-  sconto = new QLabel(this);
+  sconto = new QLabel();
   fl->addRow(QStringLiteral("Sconto"), sconto);
 
   modifica = new QPushButton(QStringLiteral("Inserisci"));
