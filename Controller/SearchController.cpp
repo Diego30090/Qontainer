@@ -27,22 +27,26 @@ SearchController::SearchController(Model *m, View *v) : Controller(m, v)
   connect(linkedView, SIGNAL(searchStart(bool, QString, QString, QString,
                                          bool, QString, QString, bool,
                                          bool, bool, bool,
-                                         bool, bool, bool)),
+                                         bool, bool, bool,
+                                         bool)),
           this, SLOT(viewSearchStart(bool, QString, QString, QString,
                                      bool, QString, QString, bool,
                                      bool, bool, bool,
-                                     bool, bool, bool)));
+                                     bool, bool, bool,
+                                     bool)));
+  connect(this, SIGNAL(viewSearchStart()), linkedView, SLOT(searchStart()));
 }
 
 void SearchController::modelUpdate()
 {
-
+  emit viewSearchStart();
 }
 
 void SearchController::viewSearchStart(bool checkA, QString nome, QString costoMax, QString prezzoMax,
                                        bool checkCD, QString annoCD, QString artista, bool compilation,
                                        bool checkC, bool usatoC, bool portatile,
-                                       bool checkS, bool usatoS, bool iphone)
+                                       bool checkS, bool usatoS, bool iphone,
+                                       bool rimozione)
 {
   QList<QString> res;
 
@@ -130,11 +134,14 @@ void SearchController::viewSearchStart(bool checkA, QString nome, QString costoM
       }
     }
   }
-  catch (ContainerEmptyTableException)
+  catch (ContainerEmptyTableException &)
   {
     return;
   }
 
-  emit searchResult(res);
+  if (rimozione)
+    linkedModel->remove(res);
+  else
+    emit searchResult(res);
 }
 

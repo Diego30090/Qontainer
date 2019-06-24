@@ -7,25 +7,25 @@
 class ContainerException : public std::exception
 {
 public:
-  virtual const char * what() const noexcept; // overriding
+  const char * what() const noexcept override;
 };
 
 class ContainerCellNotFoundException : public ContainerException
 {
 public:
-  virtual const char * what() const noexcept; // overriding
+  const char * what() const noexcept override;
 };
 
 class ContainerDuplicateKeyException : public ContainerException
 {
 public:
-  virtual const char * what() const noexcept; // overriding
+  const char * what() const noexcept override;
 };
 
 class ContainerEmptyTableException : public ContainerException
 {
 public:
-  virtual const char * what() const noexcept; // overriding
+  const char * what() const noexcept override;
 };
 
 #endif // CONTAINEREXCEPTION_HPP

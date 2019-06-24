@@ -27,7 +27,7 @@ signals:
   void viewTableUpdate(QList<QString>);
 
 public slots:
-  virtual void modelUpdate() override;
+  void modelUpdate() override;
 
   void modelError(QString);
 

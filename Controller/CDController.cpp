@@ -1,7 +1,7 @@
 #include "CDController.hpp"
 
 CDController::CDController(Model *m, View *view)
-  : Controller(m, view), id(QStringLiteral(""))
+  : Controller(m, view), id("")
 {
   connect(this, SIGNAL(viewUpdateFields(QString)), linkedView, SLOT(updateFields(QString)));
 
@@ -32,12 +32,12 @@ void CDController::modelUpdate()
       {
         linkedModel->getArticolo(id);
       }
-      catch (ModelEmptyBoxException)
+      catch (ModelEmptyBoxException &)
       {
         linkedView->close();
         return;
       }
-      catch (ModelArticleNotFoundException)
+      catch (ModelArticleNotFoundException &)
       {
         linkedView->close();
         return;
@@ -47,28 +47,48 @@ void CDController::modelUpdate()
     }
 }
 
-void CDController::viewApplicaModifica(QString ID, QString NOME, QString SPI, QString COSTO,
-                                       QString ANNO, QString ARTISTA, bool COMPILATION)
+void CDController::viewApplicaModifica(QString ID, QString NOME, QString _SPI, QString _COSTO,
+                                       QString _ANNO, QString ARTISTA, bool COMPILATION)
 {
+  if (ID.isEmpty())
+    {
+      QMessageBox::critical(linkedView, QStringLiteral("Errore Inserimento Dati"), QStringLiteral("ID non inserito!"));
+      return;
+    }
+
+  bool ok_costo;
+  bool ok_spi;
+  bool ok_anno;
+
+  float COSTO = _COSTO.toFloat(&ok_costo);
+  unsigned int SPI = _SPI.toUInt(&ok_spi);
+  unsigned int ANNO = _ANNO.toUInt(&ok_anno);
+
+  if (!(ok_costo && ok_spi && ok_anno))
+    {
+      QMessageBox::critical(linkedView, QStringLiteral("Errore Inserimento Dati"), QStringLiteral("I dati inseriti non sono corretti:\ncontrollare i valori numerici"));
+      return;
+    }
+
   id = ID;
 
   try
   {
     linkedModel->getArticolo(ID);
   }
-  catch (ModelEmptyBoxException)
+  catch (ModelEmptyBoxException &)
   {
-    linkedModel->insert(ID, CD(ARTISTA.toStdString(), COMPILATION, ANNO.toUInt(), NOME.toStdString(), COSTO.toFloat(), SPI.toUInt()));
+    linkedModel->insert(ID, CD(ARTISTA.toStdString(), COMPILATION, ANNO, NOME.toStdString(), COSTO, SPI));
     return;
   }
-  catch (ModelArticleNotFoundException)
+  catch (ModelArticleNotFoundException &)
   {
-    linkedModel->insert(ID, CD(ARTISTA.toStdString(), COMPILATION, ANNO.toUInt(), NOME.toStdString(), COSTO.toFloat(), SPI.toUInt()));
+    linkedModel->insert(ID, CD(ARTISTA.toStdString(), COMPILATION, ANNO, NOME.toStdString(), COSTO, SPI));
     return;
   }
 
-  linkedModel->setArticolo(ID, NOME, COSTO.toFloat(), SPI.toUInt());
-  linkedModel->setMedia(ID, ANNO.toUInt());
+  linkedModel->setArticolo(ID, NOME, COSTO, SPI);
+  linkedModel->setMedia(ID, ANNO);
   linkedModel->setCD(ID, ARTISTA, COMPILATION);
 }
 

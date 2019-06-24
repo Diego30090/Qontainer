@@ -27,12 +27,12 @@ private:
   QPushButton *modifica;
   QPushButton *elimina;
 
-  virtual ComputerController * makeController(Model *m) override;
+  ComputerController * makeController(Model *m) override;
 
 public:
   explicit ComputerView(QWidget *parent);
 
-  virtual ComputerController * getController() override;
+  ComputerController * getController() override;
 
 signals:
   void applicaModifica(QString, QString, QString, QString, bool, bool);

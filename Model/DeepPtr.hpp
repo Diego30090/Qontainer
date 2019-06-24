@@ -33,7 +33,7 @@ public:
   const T * operator&() const;
   T * operator&();
 
-  bool operator==(const DeepPtr &) const; // se punta allo stesso T
+  bool operator==(const DeepPtr &) const;
   bool operator!=(const DeepPtr &) const;
 };
   

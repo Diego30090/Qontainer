@@ -174,8 +174,9 @@ unsigned int Smartphone::getWarranty() const
 {
   if (isUsato())
     return 0;
-  else if (isiPhone())
+
+  if (isiPhone())
     return 1;
-  else
-    return 2;
+
+  return 2;
 }

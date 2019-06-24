@@ -34,7 +34,7 @@ void MainController::modelError(QString msg)
 
 void MainController::viewToolBarTriggered(QAction *a)
 {
-  QString fileName = QStringLiteral("");
+  QString fileName = "";
   QDialog *diag;
 
   switch (a->data().toInt())
@@ -58,7 +58,7 @@ void MainController::viewToolBarTriggered(QAction *a)
       break;
 
     case 2:
-      fileName = QFileDialog::getOpenFileName(linkedView, QStringLiteral("Apri"), QStringLiteral(""), QStringLiteral("YAML Files (*.yaml *.yml)"));
+      fileName = QFileDialog::getOpenFileName(linkedView, QStringLiteral("Apri"), "", QStringLiteral("YAML Files (*.yaml *.yml)"));
 
       if (!fileName.isEmpty())
         {

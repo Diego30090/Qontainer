@@ -18,7 +18,7 @@ private:
   QHBoxLayout *hl;
   QTableWidget *tab;
 
-  virtual MainController * makeController(Model *m) override;
+  MainController * makeController(Model *m) override;
 
 public:
   explicit MainView(QWidget *parent = nullptr);

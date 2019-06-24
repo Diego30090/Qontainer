@@ -85,7 +85,11 @@ SearchView::SearchView(QWidget *parent) : View(parent)
 
   auto b = new QPushButton(QStringLiteral("Cerca"));
   vl->addWidget(b);
-  connect(b, SIGNAL(clicked()), this, SLOT(_searchStart()));
+  connect(b, SIGNAL(clicked()), this, SLOT(searchStart()));
+
+  auto r = new QPushButton(QStringLiteral("Rimuovi elementi trovati"));
+  vl->addWidget(r);
+  connect(r, SIGNAL(clicked()), this, SLOT(deleteSearched()));
 }
 
 SearchController * SearchView::getController()
@@ -97,14 +101,6 @@ void SearchView::closeEvent(QCloseEvent *event)
 {
   emit closing();
   event->accept();
-}
-
-void SearchView::_searchStart()
-{
-  emit searchStart(checkA->isChecked(), nome->text(), costoMax->text(), prezzoMax->text(),
-                   checkCD->isChecked(), annoCD->text(), artista->text(), compilation->isChecked(),
-                   checkC->isChecked(), usatoC->isChecked(), portatile->isChecked(),
-                   checkS->isChecked(), usatoS->isChecked(), iphone->isChecked());
 }
 
 void SearchView::_checkedA(bool on)
@@ -159,4 +155,22 @@ void SearchView::_checkedS(bool on)
       checkC->setChecked(false);
       checkA->setChecked(false);
     }
+}
+
+void SearchView::searchStart()
+{
+  emit searchStart(checkA->isChecked(), nome->text(), costoMax->text(), prezzoMax->text(),
+                   checkCD->isChecked(), annoCD->text(), artista->text(), compilation->isChecked(),
+                   checkC->isChecked(), usatoC->isChecked(), portatile->isChecked(),
+                   checkS->isChecked(), usatoS->isChecked(), iphone->isChecked(),
+                   false);
+}
+
+void SearchView::deleteSearched()
+{
+  emit searchStart(checkA->isChecked(), nome->text(), costoMax->text(), prezzoMax->text(),
+                   checkCD->isChecked(), annoCD->text(), artista->text(), compilation->isChecked(),
+                   checkC->isChecked(), usatoC->isChecked(), portatile->isChecked(),
+                   checkS->isChecked(), usatoS->isChecked(), iphone->isChecked(),
+                   true);
 }

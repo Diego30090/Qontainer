@@ -1,6 +1,6 @@
 #include "Model.hpp"
 
-Model::Model(QObject *parent) : QObject(parent), containerPath(QStringLiteral("")), box(nullptr) {}
+Model::Model(QObject *parent) : QObject(parent), containerPath(""), box(nullptr) {}
 
 Model::~Model()
 {
@@ -14,11 +14,11 @@ const DeepPtr<Articolo> Model::getArticolo(QString id) const
   {
     return box->get(id.toStdString());
   }
-  catch (ContainerEmptyTableException)
+  catch (ContainerEmptyTableException &)
   {
     throw ModelEmptyBoxException();
   }
-  catch (ContainerCellNotFoundException)
+  catch (ContainerCellNotFoundException &)
   {
     throw ModelArticleNotFoundException();
   }
@@ -287,7 +287,6 @@ void Model::newBox()
 }
 
 void Model::openBox()
-// THROWS: ModelFileNotAvailableException
 {
   if (box) throw ModelBoxNotClosedException();
 
@@ -339,7 +338,6 @@ void Model::openBox()
 }
 
 void Model::closeBox()
-// THROWS: ModelBoxNotOpenException
 {
   if (!box) throw ModelBoxNotOpenException();
 
@@ -348,7 +346,6 @@ void Model::closeBox()
 }
 
 void Model::saveBox() const
-// THROWS: ModelBoxNotOpenException, ModelBoxPathNotSetException, ModelFileNotAvailableException
 {
   if (!box) throw ModelBoxNotOpenException();
 

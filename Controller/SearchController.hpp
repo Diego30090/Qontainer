@@ -16,14 +16,16 @@ public:
 signals:
   void searchResult(QList<QString>);
   void viewClosing();
+  void viewSearchStart();
   
 public slots:
-  virtual void modelUpdate() override;
+  void modelUpdate() override;
   
-  void viewSearchStart(bool, QString, QString, QString, // Articolo
-                       bool, QString, QString, bool,    // CD
-                       bool, bool, bool,                // Computer
-                       bool, bool, bool);               // Smartphone
+  void viewSearchStart(bool, QString, QString, QString,
+                       bool, QString, QString, bool,
+                       bool, bool, bool,
+                       bool, bool, bool,
+                       bool);
 };
 
 #endif // SEARCHCONTROLLER_HPP

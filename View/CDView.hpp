@@ -27,12 +27,12 @@ private:
   QPushButton *modifica;
   QPushButton *elimina;
 
-  virtual CDController * makeController(Model *m) override;
+  CDController * makeController(Model *m) override;
 
 public:
   explicit CDView(QWidget *parent);
 
-  virtual CDController * getController() override;
+  CDController * getController() override;
 
 signals:
   void applicaModifica(QString, QString, QString, QString, QString, QString, bool);

@@ -33,7 +33,7 @@ private:
   QCheckBox *usatoS;
   QCheckBox *iphone;
 
-  virtual SearchController * makeController(Model *m) override;
+  SearchController * makeController(Model *m) override;
 
 public:
   explicit SearchView(QWidget *parent);
@@ -41,21 +41,25 @@ public:
   SearchController * getController() override;
 
 protected:
-  virtual void closeEvent(QCloseEvent *) override;
+  void closeEvent(QCloseEvent *) override;
 
 signals:
   void searchStart(bool, QString, QString, QString, // Articolo
                    bool, QString, QString, bool,    // CD
                    bool, bool, bool,                // Computer
-                   bool, bool, bool);               // Smartphone
+                   bool, bool, bool,                // Smartphone
+                   bool);                           // Rimozione
   void closing();
   
 private slots:
-  void _searchStart();
   void _checkedA(bool);
   void _checkedCD(bool);
   void _checkedC(bool);
   void _checkedS(bool);
+
+public slots:
+  void searchStart();
+  void deleteSearched();
 };
 
 #endif // SEARCHVIEW_HPP

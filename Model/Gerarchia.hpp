@@ -40,12 +40,6 @@ public:
 
   unsigned int getAnno() const;
   void setAnno(unsigned int);
-
-  virtual float getPrezzo() const override = 0;
-
-  virtual unsigned int getSconto() const override = 0;
-
-  virtual Media * clone() const override = 0;
 };
 
 class Elettronica : public Articolo
@@ -58,12 +52,6 @@ public:
 
   bool isUsato() const;
   void setUsato(bool);
-
-  virtual float getPrezzo() const override = 0;
-
-  virtual unsigned int getSconto() const override = 0;
-
-  virtual Elettronica * clone() const override = 0;
 
   virtual unsigned int getWarranty() const = 0;
 };
@@ -83,11 +71,11 @@ public:
   bool isCompilation() const;
   void setCompilation(bool);
 
-  virtual float getPrezzo() const override;
+  float getPrezzo() const override;
 
-  virtual unsigned int getSconto() const override;
+  unsigned int getSconto() const override;
 
-  virtual CD * clone() const override;
+  CD * clone() const override;
 };
 
 
@@ -102,13 +90,13 @@ public:
   bool isPortatile() const;
   void setPortatile(bool);
 
-  virtual float getPrezzo() const override;
+  float getPrezzo() const override;
 
-  virtual unsigned int getSconto() const override;
+  unsigned int getSconto() const override;
 
-  virtual Computer * clone() const override;
+  Computer * clone() const override;
 
-  virtual unsigned int getWarranty() const override;
+  unsigned int getWarranty() const override;
 };
 
 class Smartphone : public Elettronica
@@ -122,13 +110,13 @@ public:
   bool isiPhone() const;
   void setiPhone(bool);
 
-  virtual float getPrezzo() const override;
+  float getPrezzo() const override;
 
-  virtual unsigned int getSconto() const override;
+  unsigned int getSconto() const override;
 
-  virtual Smartphone * clone() const override;
+  Smartphone * clone() const override;
 
-  virtual unsigned int getWarranty() const override;
+  unsigned int getWarranty() const override;
 };
 
 #endif // GERARCHIA_HPP

@@ -25,7 +25,7 @@ private:
 
 public:
   explicit Model(QObject *parent = nullptr);
-  ~Model();
+  ~Model() override;
 
   // Metodi per la gestione dei dati
   bool exists(QString) const;

@@ -27,12 +27,12 @@ private:
   QPushButton *modifica;
   QPushButton *elimina;
 
-  virtual SmartphoneController * makeController(Model *m) override;
+  SmartphoneController * makeController(Model *m) override;
 
 public:
   explicit SmartphoneView(QWidget *parent);
 
-  virtual SmartphoneController * getController() override;
+  SmartphoneController * getController() override;
 
 signals:
   void applicaModifica(QString, QString, QString, QString, bool, bool);

@@ -22,7 +22,7 @@ signals:
   void viewUpdateFields(QString);
 
 public slots:
-  virtual void modelUpdate() override;
+  void modelUpdate() override;
 
   void viewApplicaModifica(QString, QString, QString, QString, QString, QString, bool);
   void viewEliminaArticolo();

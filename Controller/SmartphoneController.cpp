@@ -1,7 +1,7 @@
 #include "SmartphoneController.hpp"
 
 SmartphoneController::SmartphoneController(Model *m, View *view)
-  : Controller(m, view), id(QStringLiteral(""))
+  : Controller(m, view), id("")
 {
   connect(this, SIGNAL(viewUpdateFields(QString)), linkedView, SLOT(updateFields(QString)));
 
@@ -32,12 +32,12 @@ void SmartphoneController::modelUpdate()
       {
         linkedModel->getArticolo(id);
       }
-      catch (ModelEmptyBoxException)
+      catch (ModelEmptyBoxException &)
       {
         linkedView->close();
         return;
       }
-      catch (ModelArticleNotFoundException)
+      catch (ModelArticleNotFoundException &)
       {
         linkedView->close();
         return;
@@ -47,27 +47,45 @@ void SmartphoneController::modelUpdate()
     }
 }
 
-void SmartphoneController::viewApplicaModifica(QString ID, QString NOME, QString SPI, QString COSTO,
+void SmartphoneController::viewApplicaModifica(QString ID, QString NOME, QString _SPI, QString _COSTO,
                                              bool USATO, bool IPHONE)
 {
+  if (ID.isEmpty())
+    {
+      QMessageBox::critical(linkedView, QStringLiteral("Errore Inserimento Dati"), QStringLiteral("ID non inserito!"));
+      return;
+    }
+
+  bool ok_costo;
+  bool ok_spi;
+
+  float COSTO = _COSTO.toFloat(&ok_costo);
+  unsigned int SPI = _SPI.toUInt(&ok_spi);
+
+  if (!(ok_costo && ok_spi))
+    {
+      QMessageBox::critical(linkedView, QStringLiteral("Errore Inserimento Dati"), QStringLiteral("I dati inseriti non sono corretti:\ncontrollare i valori numerici"));
+      return;
+    }
+
   id = ID;
 
   try
   {
     linkedModel->getArticolo(ID);
   }
-  catch (ModelEmptyBoxException)
+  catch (ModelEmptyBoxException &)
   {
-    linkedModel->insert(ID, Smartphone(IPHONE, USATO, NOME.toStdString(), COSTO.toFloat(), SPI.toUInt()));
+    linkedModel->insert(ID, Smartphone(IPHONE, USATO, NOME.toStdString(), COSTO, SPI));
     return;
   }
-  catch (ModelArticleNotFoundException)
+  catch (ModelArticleNotFoundException &)
   {
-    linkedModel->insert(ID, Smartphone(IPHONE, USATO, NOME.toStdString(), COSTO.toFloat(), SPI.toUInt()));
+    linkedModel->insert(ID, Smartphone(IPHONE, USATO, NOME.toStdString(), COSTO, SPI));
     return;
   }
 
-  linkedModel->setArticolo(ID, NOME, COSTO.toFloat(), SPI.toUInt());
+  linkedModel->setArticolo(ID, NOME, COSTO, SPI);
   linkedModel->setElettronica(ID, USATO);
   linkedModel->setSmartphone(ID, IPHONE);
 }
