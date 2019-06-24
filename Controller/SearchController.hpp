@@ -15,6 +15,7 @@ public:
 
 signals:
   void searchResult(QList<QString>);
+  void viewClosing();
   
 public slots:
   virtual void modelUpdate() override;

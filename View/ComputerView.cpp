@@ -7,6 +7,7 @@ ComputerController * ComputerView::makeController(Model *m)
 
 ComputerView::ComputerView(QWidget *parent) : View(parent), fl(new QFormLayout(this))
 {
+  setAttribute(Qt::WA_DeleteOnClose);
   setFixedSize(250, 350);
 
   id = new QLineEdit(this);

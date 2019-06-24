@@ -7,6 +7,7 @@ CDController * CDView::makeController(Model *m)
 
 CDView::CDView(QWidget *parent) : View(parent), fl(new QFormLayout(this))
 {
+  setAttribute(Qt::WA_DeleteOnClose);
   setFixedSize(250, 350);
 
   id = new QLineEdit();

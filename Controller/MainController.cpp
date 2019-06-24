@@ -74,12 +74,14 @@ void MainController::viewToolBarTriggered(QAction *a)
           rw = new SearchView(linkedView);
           View::initialize(rw, linkedModel);
           connect(rw->getController(), SIGNAL(searchResult(QList<QString>)), this, SIGNAL(viewTableUpdate(QList<QString>)));
+          connect(rw->getController(), SIGNAL(viewClosing()), this, SLOT(modelUpdate()));
           rw->show();
         }
       break;
 
     case 4:
       diag = new QDialog(linkedView);
+      diag->setAttribute(Qt::WA_DeleteOnClose);
       diag->setModal(true);
 
       auto vl = new QVBoxLayout(diag);

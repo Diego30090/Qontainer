@@ -22,6 +22,8 @@ SearchController::SearchController(Model *m, View *v) : Controller(m, v)
 {
   connect(linkedModel, SIGNAL(notify()), this, SLOT(modelUpdate()));
 
+  connect(linkedView, SIGNAL(closing()), this, SIGNAL(viewClosing()));
+
   connect(linkedView, SIGNAL(searchStart(bool, QString, QString, QString,
                                          bool, QString, QString, bool,
                                          bool, bool, bool,

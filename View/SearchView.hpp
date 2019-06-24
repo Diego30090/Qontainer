@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QPushButton>
+#include <QCloseEvent>
 #include "View.hpp"
 #include "SearchController.hpp"
 
@@ -39,11 +40,15 @@ public:
   
   SearchController * getController() override;
 
+protected:
+  virtual void closeEvent(QCloseEvent *) override;
+
 signals:
   void searchStart(bool, QString, QString, QString, // Articolo
                    bool, QString, QString, bool,    // CD
                    bool, bool, bool,                // Computer
                    bool, bool, bool);               // Smartphone
+  void closing();
   
 private slots:
   void _searchStart();

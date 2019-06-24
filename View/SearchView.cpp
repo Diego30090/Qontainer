@@ -7,6 +7,7 @@ SearchController * SearchView::makeController(Model *m)
 
 SearchView::SearchView(QWidget *parent) : View(parent)
 {
+  setAttribute(Qt::WA_DeleteOnClose);
   setFixedSize(310, 550);
 
   auto vl = new QVBoxLayout(this);
@@ -90,6 +91,12 @@ SearchView::SearchView(QWidget *parent) : View(parent)
 SearchController * SearchView::getController()
 {
   return dynamic_cast<SearchController *>(View::getController());
+}
+
+void SearchView::closeEvent(QCloseEvent *event)
+{
+  emit closing();
+  event->accept();
 }
 
 void SearchView::_searchStart()
