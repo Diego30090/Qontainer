@@ -2,7 +2,11 @@
 #define DEEPPTR_HPP
 
 /* Contratto:
- * Si assume che il tipo T abbia un metodo T * clone();
+ * DeepPtr<T> e' un wrapper di T* che estende il concetto di puntatore
+ * a T aggiungendo funzionalita' quali costruzione di copia profonda,
+ * assegnazione profonda e distruzione profonda a tipi di dato T
+ * user-defined che mettano a disposizione un metodo clone() di
+ * clonazione polimorfa e distruzione polimorfa
  */
 
 ////////////////////////////////////////////////////////////////////////////////

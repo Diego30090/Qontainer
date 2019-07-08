@@ -1,0 +1,36 @@
+---
+BOX:
+  - id: gs8
+    nome: Galaxy S8
+    costo: 400
+    spi: 1
+    elettronica:
+      usato: true
+      smartphone:
+        iphone: false
+  - id: skd
+    nome: Skid Row
+    costo: 10
+    spi: 0
+    media:
+      anno: 1987
+      cd:
+        artista: Skid Row
+        compilation: false
+  - id: mbp
+    nome: MacBook Pro
+    costo: 2000
+    spi: 0
+    elettronica:
+      usato: false
+      computer:
+        portatile: true
+  - id: ipx
+    nome: iPhone X
+    costo: 1000
+    spi: 0
+    elettronica:
+      usato: false
+      smartphone:
+        iphone: true
+...

@@ -61,7 +61,7 @@ MainController * MainView::getController()
   return dynamic_cast<MainController *>(View::getController());
 }
 
-void MainView::_tableTriggered(int row/*, int col*/)
+void MainView::_tableTriggered(int row)
 {
   emit tableTriggered(tab->item(row, 0)->text());
 }
