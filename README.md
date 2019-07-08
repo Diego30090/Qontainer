@@ -4,7 +4,7 @@ Progetto individuale del corso di Programmazione ad Oggetti, Laurea Triennale in
 ### File Essenziali
 | File | Descrizione |
 | ------ | ------ |
-| [specificaProgetto18/19.pdf](specificaProgetto18/19.pdf) | Requisiti da soddisfare |
+| [specificaProgetto1819.pdf](specificaProgetto1819.pdf) | Requisiti da soddisfare |
 | [relazione.pdf](relazione.pdf) | Relazione che accompagna il progetto |
 | [feedback.txt](feedback.txt) | Valutazione ricevuta dal professore successivamente alla consegna dell'elaborato finale |
 
