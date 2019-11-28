@@ -1,19 +1,19 @@
-# Qontainer
+# Qontainer 
+[![Build Status](https://travis-ci.org/achimett/Qontainer.svg?branch=master)](https://travis-ci.org/achimett/Qontainer)
+
 Progetto individuale del corso di Programmazione ad Oggetti, Laurea Triennale in Informatica, Università di Padova, tenuto dal prof. Francesco Ranzato. Si è scelto di modellare la creazione di un software contenitore per articoli in vendita in un negozio di elettronica (es. Mediaword, Unieuro).
 
-### File Essenziali
+## File Essenziali
 | File | Descrizione |
 | ------ | ------ |
 | [specificaProgetto1819.pdf](specificaProgetto1819.pdf) | Requisiti da soddisfare |
 | [relazione.pdf](relazione.pdf) | Relazione che accompagna il progetto |
 | [feedback.txt](feedback.txt) | Valutazione ricevuta dal professore successivamente alla consegna dell'elaborato finale |
 
-### Compilazione
+## Compilazione
 
 Requisiti:
 - Qt 5.5.1 (o superiore)
-- gcc o clang
-- make
 
 Nella cartella del progetto, eseguire le seguenti istruzioni da terminale:
 ```sh
@@ -21,7 +21,7 @@ $ qmake Qontainer.pro
 $ make
 ```
 
-### Istruzioni
+## Istruzioni per l'uso
 All’avvio si aprirà la finestra principale senza nessuna entry. Nella barra degli strumenti sono presenti i seguenti pulsanti:
 - Salva: salva il Container corrente se esiste altrimenti richiama Salva
 con Nome.
