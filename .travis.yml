@@ -4,13 +4,11 @@ os: linux
 
 dist: xenial
 
-compiler:
-  - gcc
-  - clang
+compiler: gcc
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get -y install qt5-qmake=5.5.1+dfsg-16ubuntu7.6
+  - sudo apt-get -y install qt5-default=5.5.1+dfsg-16ubuntu7.6
     
 script:
   - qmake Qontainer.pro
